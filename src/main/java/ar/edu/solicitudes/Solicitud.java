@@ -2,9 +2,7 @@ package ar.edu.solicitudes;
 
 public class Solicitud {
     public int id;
-    public String legajo;
-    public String nombre;
-    public String email;
+    public Estudiante estudiante;
     public TipoSolicitud tipo;
     public String descripcion;
     public Prioridad prioridad;

@@ -4,6 +4,7 @@ import java.util.*;
 
 // Refactoring 1 (Extract Method + Rename): main() ya no contiene la logica de cada opcion del menu.
 // Refactoring 2 (Replace Type Code with Enum): usa los enums del dominio en lugar de strings.
+// Refactoring 4 (Introduce Parameter Object): arma NuevaSolicitud y FiltroSolicitudes.
 public class Main {
 
     public static void main(String[] args) {
@@ -50,7 +51,8 @@ public class Main {
         String tipo = leerTextoEnMayusculas(teclado, "Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): ");
         String descripcion = leerTexto(teclado, "Descripcion: ");
         String urgente = leerTexto(teclado, "Urgente (s/n): ");
-        int resultado = GestorSolicitudes.registrar(legajo, nombre, email, tipo, descripcion, urgente.equalsIgnoreCase("s"));
+        NuevaSolicitud datos = new NuevaSolicitud(new Estudiante(legajo, nombre, email), tipo, descripcion, urgente.equalsIgnoreCase("s"));
+        int resultado = GestorSolicitudes.registrar(datos);
         if (resultado == -1) System.out.println("Error: legajo invalido (se esperan 5 digitos)");
         else if (resultado == -2) System.out.println("Error: el nombre no puede estar vacio");
         else if (resultado == -3) System.out.println("Error: email invalido");
@@ -93,7 +95,7 @@ public class Main {
         String prioridad = leerTextoEnMayusculas(teclado, "Filtro prioridad (vacio = todos): ");
         String responsable = leerTextoEnMayusculas(teclado, "Filtro responsable (vacio = todos): ");
         String legajo = leerTexto(teclado, "Filtro legajo (vacio = todos): ");
-        List<Solicitud> resultado = GestorSolicitudes.buscar(estado, tipo, prioridad, responsable, legajo);
+        List<Solicitud> resultado = GestorSolicitudes.buscar(new FiltroSolicitudes(estado, tipo, prioridad, responsable, legajo));
         if (resultado.size() == 0) {
             System.out.println("Sin resultados");
             return;
@@ -105,7 +107,7 @@ public class Main {
     }
 
     private static String formatearFila(Solicitud s) {
-        return "#" + s.id + " | " + s.legajo + " | " + s.nombre + " | " + s.tipo + " | "
+        return "#" + s.id + " | " + s.estudiante.legajo() + " | " + s.estudiante.nombre() + " | " + s.tipo + " | "
                 + s.prioridad + " | " + s.estado + " | "
                 + (s.responsable == null ? "sin asignar" : s.responsable.name());
     }
