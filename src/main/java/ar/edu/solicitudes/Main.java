@@ -58,7 +58,7 @@ public class Main {
         else {
             Solicitud nueva = GestorSolicitudes.buscarPorId(resultado);
             System.out.println("Solicitud registrada con ID " + resultado + " (prioridad " + nueva.prioridad
-                    + ", plazo " + GestorSolicitudes.calcularPlazo(nueva) + " dias)");
+                    + ", plazo " + nueva.calcularPlazo() + " dias)");
         }
     }
 
