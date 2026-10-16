@@ -4,8 +4,9 @@ import java.io.*;
 import java.util.*;
 
 // Gestor de solicitudes: carga, guarda, valida, calcula y reporta.
-// Refactoring 1 (Extract Method + Rename): se descompusieron los metodos largos y se eliminaron
-// duplicaciones y codigo muerto. La estructura y los codigos de error todavia no cambian.
+// Refactoring 1 (Extract Method + Rename): metodos cortos, sin duplicacion ni codigo muerto.
+// Refactoring 2 (Replace Type Code with Enum): estado, tipo, prioridad y responsable pasan de String a enum.
+// Los codigos de error y la estructura general todavia no cambian.
 public class GestorSolicitudes {
 
     public static List<Solicitud> solicitudes = new ArrayList<Solicitud>();
@@ -48,17 +49,17 @@ public class GestorSolicitudes {
         s.legajo = campos[1];
         s.nombre = campos[2];
         s.email = campos[3];
-        s.tipo = campos[4];
+        s.tipo = TipoSolicitud.desde(campos[4]);
         s.descripcion = campos[5];
-        s.prioridad = campos[6];
-        s.estado = campos[7];
-        s.responsable = campos[8].equals("-") ? null : campos[8];
+        s.prioridad = Prioridad.desde(campos[6]);
+        s.estado = Estado.desde(campos[7]);
+        s.responsable = Responsable.desde(campos[8]);
         s.urgente = campos[9].equals("1");
         return s;
     }
 
     private static String serializar(Solicitud s) {
-        String responsable = s.responsable == null ? "-" : s.responsable;
+        String responsable = s.responsable == null ? "-" : s.responsable.name();
         String urgente = s.urgente ? "1" : "0";
         return s.id + ";" + s.legajo + ";" + s.nombre + ";" + s.email + ";" + s.tipo + ";"
                 + s.descripcion + ";" + s.prioridad + ";" + s.estado + ";" + responsable + ";" + urgente;
@@ -68,11 +69,12 @@ public class GestorSolicitudes {
 
     // devuelve el id de la nueva solicitud, o un codigo negativo si hay error
     // -1 legajo, -2 nombre, -3 email, -4 tipo
-    public static int registrar(String legajo, String nombre, String email, String tipo, String descripcion, boolean urgente) {
+    public static int registrar(String legajo, String nombre, String email, String textoTipo, String descripcion, boolean urgente) {
         if (!esLegajoValido(legajo)) return -1;
         if (!esNombreValido(nombre)) return -2;
         if (!esEmailValido(email)) return -3;
-        if (!esTipoValido(tipo)) return -4;
+        TipoSolicitud tipo = TipoSolicitud.desde(textoTipo);
+        if (tipo == null) return -4;
 
         Solicitud nueva = new Solicitud();
         nueva.id = proximoId;
@@ -83,7 +85,7 @@ public class GestorSolicitudes {
         nueva.tipo = tipo;
         nueva.descripcion = descripcion == null ? "" : descripcion;
         nueva.prioridad = calcularPrioridad(tipo, urgente);
-        nueva.estado = "PENDIENTE";
+        nueva.estado = Estado.PENDIENTE;
         nueva.responsable = null;
         nueva.urgente = urgente;
         solicitudes.add(nueva);
@@ -92,22 +94,24 @@ public class GestorSolicitudes {
     }
 
     // 0 ok, -1 no existe, -2 estado desconocido, -3 transicion invalida, -4 falta responsable
-    public static int cambiarEstado(int id, String nuevoEstado) {
+    public static int cambiarEstado(int id, String textoEstado) {
         Solicitud s = buscarPorId(id);
         if (s == null) return -1;
-        if (!esEstadoValido(nuevoEstado)) return -2;
+        Estado nuevoEstado = Estado.desde(textoEstado);
+        if (nuevoEstado == null) return -2;
         if (!esTransicionPermitida(s.estado, nuevoEstado)) return -3;
-        if (nuevoEstado.equals("EN_PROCESO") && s.responsable == null) return -4;
+        if (nuevoEstado == Estado.EN_PROCESO && s.responsable == null) return -4;
         s.estado = nuevoEstado;
         guardar();
         return 0;
     }
 
     // 0 ok, -1 no existe, -2 responsable desconocido, -3 solicitud cerrada
-    public static int asignarResponsable(int id, String responsable) {
+    public static int asignarResponsable(int id, String textoResponsable) {
         Solicitud s = buscarPorId(id);
         if (s == null) return -1;
-        if (!esResponsableValido(responsable)) return -2;
+        Responsable responsable = Responsable.desde(textoResponsable);
+        if (responsable == null) return -2;
         if (estaCerrada(s)) return -3;
         s.responsable = responsable;
         guardar();
@@ -134,10 +138,10 @@ public class GestorSolicitudes {
     }
 
     private static boolean cumpleFiltros(Solicitud s, String estado, String tipo, String prioridad, String responsable, String legajo) {
-        String responsableActual = s.responsable == null ? "" : s.responsable;
-        return coincide(estado, s.estado)
-                && coincide(tipo, s.tipo)
-                && coincide(prioridad, s.prioridad)
+        String responsableActual = s.responsable == null ? "" : s.responsable.name();
+        return coincide(estado, s.estado.name())
+                && coincide(tipo, s.tipo.name())
+                && coincide(prioridad, s.prioridad.name())
                 && coincide(responsable, responsableActual)
                 && coincide(legajo, s.legajo);
     }
@@ -165,53 +169,41 @@ public class GestorSolicitudes {
         return email != null && email.indexOf("@") >= 1 && email.lastIndexOf(".") >= email.indexOf("@");
     }
 
-    private static boolean esTipoValido(String tipo) {
-        return tipo.equals("CERTIFICADO") || tipo.equals("EQUIVALENCIA") || tipo.equals("REVISION_NOTA") || tipo.equals("BAJA_MATERIA");
-    }
-
-    private static boolean esEstadoValido(String estado) {
-        return estado.equals("PENDIENTE") || estado.equals("EN_PROCESO") || estado.equals("RESUELTA") || estado.equals("RECHAZADA");
-    }
-
-    private static boolean esResponsableValido(String responsable) {
-        return responsable.equals("BEDELIA") || responsable.equals("ALUMNADO") || responsable.equals("SECRETARIA");
-    }
-
     private static boolean estaCerrada(Solicitud s) {
-        return s.estado.equals("RESUELTA") || s.estado.equals("RECHAZADA");
+        return s.estado == Estado.RESUELTA || s.estado == Estado.RECHAZADA;
     }
 
-    private static boolean esTransicionPermitida(String actual, String nuevo) {
-        if (actual.equals("PENDIENTE")) return nuevo.equals("EN_PROCESO") || nuevo.equals("RECHAZADA");
-        if (actual.equals("EN_PROCESO")) return nuevo.equals("RESUELTA") || nuevo.equals("RECHAZADA");
+    private static boolean esTransicionPermitida(Estado actual, Estado nuevo) {
+        if (actual == Estado.PENDIENTE) return nuevo == Estado.EN_PROCESO || nuevo == Estado.RECHAZADA;
+        if (actual == Estado.EN_PROCESO) return nuevo == Estado.RESUELTA || nuevo == Estado.RECHAZADA;
         return false;
     }
 
-    private static String calcularPrioridad(String tipo, boolean urgente) {
-        String prioridad = prioridadBase(tipo);
+    private static Prioridad calcularPrioridad(TipoSolicitud tipo, boolean urgente) {
+        Prioridad prioridad = prioridadBase(tipo);
         return urgente ? subirPrioridad(prioridad) : prioridad;
     }
 
-    private static String prioridadBase(String tipo) {
-        if (tipo.equals("REVISION_NOTA")) return "ALTA";
-        if (tipo.equals("EQUIVALENCIA")) return "MEDIA";
-        if (tipo.equals("BAJA_MATERIA")) return "MEDIA";
-        return "BAJA";
+    private static Prioridad prioridadBase(TipoSolicitud tipo) {
+        if (tipo == TipoSolicitud.REVISION_NOTA) return Prioridad.ALTA;
+        if (tipo == TipoSolicitud.EQUIVALENCIA) return Prioridad.MEDIA;
+        if (tipo == TipoSolicitud.BAJA_MATERIA) return Prioridad.MEDIA;
+        return Prioridad.BAJA;
     }
 
-    private static String subirPrioridad(String prioridad) {
-        if (prioridad.equals("BAJA")) return "MEDIA";
-        if (prioridad.equals("MEDIA")) return "ALTA";
+    private static Prioridad subirPrioridad(Prioridad prioridad) {
+        if (prioridad == Prioridad.BAJA) return Prioridad.MEDIA;
+        if (prioridad == Prioridad.MEDIA) return Prioridad.ALTA;
         return prioridad;
     }
 
     // plazo de respuesta en dias habiles
     public static int calcularPlazo(Solicitud s) {
         int dias;
-        if (s.prioridad.equals("ALTA")) dias = 3;
-        else if (s.prioridad.equals("MEDIA")) dias = 5;
+        if (s.prioridad == Prioridad.ALTA) dias = 3;
+        else if (s.prioridad == Prioridad.MEDIA) dias = 5;
         else dias = 10;
-        if (s.tipo.equals("EQUIVALENCIA")) dias = dias + 5;
+        if (s.tipo == TipoSolicitud.EQUIVALENCIA) dias = dias + 5;
         return dias;
     }
 
@@ -222,30 +214,30 @@ public class GestorSolicitudes {
         System.out.println("--- REPORTE ---");
         System.out.println("Total de solicitudes: " + total);
         System.out.println("Por estado:");
-        System.out.println("  PENDIENTE: " + contarPorEstado("PENDIENTE"));
-        System.out.println("  EN_PROCESO: " + contarPorEstado("EN_PROCESO"));
-        System.out.println("  RESUELTA: " + contarPorEstado("RESUELTA"));
-        System.out.println("  RECHAZADA: " + contarPorEstado("RECHAZADA"));
+        System.out.println("  PENDIENTE: " + contarPorEstado(Estado.PENDIENTE));
+        System.out.println("  EN_PROCESO: " + contarPorEstado(Estado.EN_PROCESO));
+        System.out.println("  RESUELTA: " + contarPorEstado(Estado.RESUELTA));
+        System.out.println("  RECHAZADA: " + contarPorEstado(Estado.RECHAZADA));
         System.out.println("Por prioridad:");
-        System.out.println("  ALTA: " + contarPorPrioridad("ALTA"));
-        System.out.println("  MEDIA: " + contarPorPrioridad("MEDIA"));
-        System.out.println("  BAJA: " + contarPorPrioridad("BAJA"));
+        System.out.println("  ALTA: " + contarPorPrioridad(Prioridad.ALTA));
+        System.out.println("  MEDIA: " + contarPorPrioridad(Prioridad.MEDIA));
+        System.out.println("  BAJA: " + contarPorPrioridad(Prioridad.BAJA));
         System.out.println("Sin responsable asignado: " + contarSinResponsable());
         System.out.println("Plazo promedio de respuesta: " + calcularPlazoPromedio() + " dias");
     }
 
-    private static int contarPorEstado(String estado) {
+    private static int contarPorEstado(Estado estado) {
         int cantidad = 0;
         for (int i = 0; i < solicitudes.size(); i++) {
-            if (solicitudes.get(i).estado.equals(estado)) cantidad++;
+            if (solicitudes.get(i).estado == estado) cantidad++;
         }
         return cantidad;
     }
 
-    private static int contarPorPrioridad(String prioridad) {
+    private static int contarPorPrioridad(Prioridad prioridad) {
         int cantidad = 0;
         for (int i = 0; i < solicitudes.size(); i++) {
-            if (solicitudes.get(i).prioridad.equals(prioridad)) cantidad++;
+            if (solicitudes.get(i).prioridad == prioridad) cantidad++;
         }
         return cantidad;
     }

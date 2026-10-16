@@ -3,6 +3,7 @@ package ar.edu.solicitudes;
 import java.util.*;
 
 // Refactoring 1 (Extract Method + Rename): main() ya no contiene la logica de cada opcion del menu.
+// Refactoring 2 (Replace Type Code with Enum): usa los enums del dominio en lugar de strings.
 public class Main {
 
     public static void main(String[] args) {
@@ -106,7 +107,7 @@ public class Main {
     private static String formatearFila(Solicitud s) {
         return "#" + s.id + " | " + s.legajo + " | " + s.nombre + " | " + s.tipo + " | "
                 + s.prioridad + " | " + s.estado + " | "
-                + (s.responsable == null ? "sin asignar" : s.responsable);
+                + (s.responsable == null ? "sin asignar" : s.responsable.name());
     }
 
     // ------------------------------------------------------------------ entrada de datos
