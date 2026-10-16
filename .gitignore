@@ -1,0 +1,6 @@
+build/
+target/
+solicitudes.csv
+*.class
+.idea/
+*.iml
