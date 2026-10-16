@@ -5,10 +5,10 @@ public class Solicitud {
     public String legajo;
     public String nombre;
     public String email;
-    public String tipo;
+    public TipoSolicitud tipo;
     public String descripcion;
-    public String prioridad;
-    public String estado;
-    public String responsable;
+    public Prioridad prioridad;
+    public Estado estado;
+    public Responsable responsable;
     public boolean urgente;
 }
