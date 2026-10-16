@@ -2,113 +2,132 @@ package ar.edu.solicitudes;
 
 import java.util.*;
 
+// Refactoring 1 (Extract Method + Rename): main() ya no contiene la logica de cada opcion del menu.
 public class Main {
 
     public static void main(String[] args) {
         GestorSolicitudes.cargar();
-        Scanner sc = new Scanner(System.in);
+        Scanner teclado = new Scanner(System.in);
         boolean salir = false;
         while (!salir) {
-            System.out.println("=== GESTION DE SOLICITUDES ACADEMICAS ===");
-            System.out.println("1. Registrar solicitud");
-            System.out.println("2. Cambiar estado");
-            System.out.println("3. Asignar responsable");
-            System.out.println("4. Buscar / filtrar");
-            System.out.println("5. Reporte");
-            System.out.println("0. Salir");
-            System.out.print("Opcion: ");
-            String op = sc.hasNextLine() ? sc.nextLine().trim() : "0";
-            if (op.equals("1")) {
-                System.out.print("Legajo: ");
-                String l = sc.nextLine().trim();
-                System.out.print("Nombre: ");
-                String n = sc.nextLine().trim();
-                System.out.print("Email: ");
-                String e = sc.nextLine().trim();
-                System.out.print("Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): ");
-                String t = sc.nextLine().trim().toUpperCase();
-                System.out.print("Descripcion: ");
-                String d = sc.nextLine().trim();
-                System.out.print("Urgente (s/n): ");
-                String u = sc.nextLine().trim();
-                int r = GestorSolicitudes.registrar(l, n, e, t, d, u.equalsIgnoreCase("s"));
-                if (r == -1) System.out.println("Error: legajo invalido (se esperan 5 digitos)");
-                else if (r == -2) System.out.println("Error: el nombre no puede estar vacio");
-                else if (r == -3) System.out.println("Error: email invalido");
-                else if (r == -4) System.out.println("Error: tipo de solicitud desconocido");
-                else {
-                    Solicitud s = GestorSolicitudes.buscarPorId(r);
-                    System.out.println("Solicitud registrada con ID " + r + " (prioridad " + s.prioridad
-                            + ", plazo " + GestorSolicitudes.calcularPlazo(s) + " dias)");
-                }
-            } else if (op.equals("2")) {
-                System.out.print("ID: ");
-                String sid = sc.nextLine();
-                int id;
-                try {
-                    id = Integer.parseInt(sid.trim());
-                } catch (Exception ex) {
-                    System.out.println("Error: ID invalido");
-                    continue;
-                }
-                System.out.print("Nuevo estado: ");
-                String ne = sc.nextLine().trim().toUpperCase();
-                int r = GestorSolicitudes.cambiarEstado(id, ne);
-                if (r == 0) System.out.println("Estado actualizado: #" + id + " -> " + ne);
-                else if (r == -1) System.out.println("Error: no existe la solicitud " + id);
-                else if (r == -2) System.out.println("Error: estado desconocido");
-                else if (r == -3) {
-                    Solicitud s = GestorSolicitudes.buscarPorId(id);
-                    System.out.println("Error: transicion invalida " + s.estado + " -> " + ne);
-                } else if (r == -4) System.out.println("Error: debe asignar responsable antes de pasar a EN_PROCESO");
-            } else if (op.equals("3")) {
-                System.out.print("ID: ");
-                String sid = sc.nextLine();
-                int id;
-                try {
-                    id = Integer.parseInt(sid.trim());
-                } catch (Exception ex) {
-                    System.out.println("Error: ID invalido");
-                    continue;
-                }
-                System.out.print("Responsable (BEDELIA/ALUMNADO/SECRETARIA): ");
-                String re = sc.nextLine().trim().toUpperCase();
-                int r = GestorSolicitudes.asignarResponsable(id, re);
-                if (r == 0) System.out.println("Responsable asignado: #" + id + " -> " + re);
-                else if (r == -1) System.out.println("Error: no existe la solicitud " + id);
-                else if (r == -2) System.out.println("Error: responsable desconocido");
-                else if (r == -3) System.out.println("Error: la solicitud esta cerrada");
-            } else if (op.equals("4")) {
-                System.out.print("Filtro estado (vacio = todos): ");
-                String fe = sc.nextLine().trim().toUpperCase();
-                System.out.print("Filtro tipo (vacio = todos): ");
-                String ft = sc.nextLine().trim().toUpperCase();
-                System.out.print("Filtro prioridad (vacio = todos): ");
-                String fp = sc.nextLine().trim().toUpperCase();
-                System.out.print("Filtro responsable (vacio = todos): ");
-                String fr = sc.nextLine().trim().toUpperCase();
-                System.out.print("Filtro legajo (vacio = todos): ");
-                String fl = sc.nextLine().trim();
-                List<Solicitud> res = GestorSolicitudes.buscar(fe, ft, fp, fr, fl);
-                if (res.size() == 0) {
-                    System.out.println("Sin resultados");
-                } else {
-                    for (int i = 0; i < res.size(); i++) {
-                        Solicitud s = res.get(i);
-                        System.out.println("#" + s.id + " | " + s.legajo + " | " + s.nombre + " | " + s.tipo + " | "
-                                + s.prioridad + " | " + s.estado + " | "
-                                + (s.responsable == null ? "sin asignar" : s.responsable));
-                    }
-                    System.out.println("Total: " + res.size() + " solicitud(es)");
-                }
-            } else if (op.equals("5")) {
+            mostrarMenu();
+            String opcion = teclado.hasNextLine() ? teclado.nextLine().trim() : "0";
+            if (opcion.equals("1")) {
+                registrarSolicitud(teclado);
+            } else if (opcion.equals("2")) {
+                cambiarEstado(teclado);
+            } else if (opcion.equals("3")) {
+                asignarResponsable(teclado);
+            } else if (opcion.equals("4")) {
+                buscarSolicitudes(teclado);
+            } else if (opcion.equals("5")) {
                 GestorSolicitudes.imprimirReporte();
-            } else if (op.equals("0")) {
+            } else if (opcion.equals("0")) {
                 System.out.println("Hasta luego");
                 salir = true;
             } else {
                 System.out.println("Opcion invalida");
             }
+        }
+    }
+
+    private static void mostrarMenu() {
+        System.out.println("=== GESTION DE SOLICITUDES ACADEMICAS ===");
+        System.out.println("1. Registrar solicitud");
+        System.out.println("2. Cambiar estado");
+        System.out.println("3. Asignar responsable");
+        System.out.println("4. Buscar / filtrar");
+        System.out.println("5. Reporte");
+        System.out.println("0. Salir");
+        System.out.print("Opcion: ");
+    }
+
+    private static void registrarSolicitud(Scanner teclado) {
+        String legajo = leerTexto(teclado, "Legajo: ");
+        String nombre = leerTexto(teclado, "Nombre: ");
+        String email = leerTexto(teclado, "Email: ");
+        String tipo = leerTextoEnMayusculas(teclado, "Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): ");
+        String descripcion = leerTexto(teclado, "Descripcion: ");
+        String urgente = leerTexto(teclado, "Urgente (s/n): ");
+        int resultado = GestorSolicitudes.registrar(legajo, nombre, email, tipo, descripcion, urgente.equalsIgnoreCase("s"));
+        if (resultado == -1) System.out.println("Error: legajo invalido (se esperan 5 digitos)");
+        else if (resultado == -2) System.out.println("Error: el nombre no puede estar vacio");
+        else if (resultado == -3) System.out.println("Error: email invalido");
+        else if (resultado == -4) System.out.println("Error: tipo de solicitud desconocido");
+        else {
+            Solicitud nueva = GestorSolicitudes.buscarPorId(resultado);
+            System.out.println("Solicitud registrada con ID " + resultado + " (prioridad " + nueva.prioridad
+                    + ", plazo " + GestorSolicitudes.calcularPlazo(nueva) + " dias)");
+        }
+    }
+
+    private static void cambiarEstado(Scanner teclado) {
+        Integer id = leerId(teclado);
+        if (id == null) return;
+        String nuevoEstado = leerTextoEnMayusculas(teclado, "Nuevo estado: ");
+        int resultado = GestorSolicitudes.cambiarEstado(id, nuevoEstado);
+        if (resultado == 0) System.out.println("Estado actualizado: #" + id + " -> " + nuevoEstado);
+        else if (resultado == -1) System.out.println("Error: no existe la solicitud " + id);
+        else if (resultado == -2) System.out.println("Error: estado desconocido");
+        else if (resultado == -3) {
+            Solicitud s = GestorSolicitudes.buscarPorId(id);
+            System.out.println("Error: transicion invalida " + s.estado + " -> " + nuevoEstado);
+        } else if (resultado == -4) System.out.println("Error: debe asignar responsable antes de pasar a EN_PROCESO");
+    }
+
+    private static void asignarResponsable(Scanner teclado) {
+        Integer id = leerId(teclado);
+        if (id == null) return;
+        String responsable = leerTextoEnMayusculas(teclado, "Responsable (BEDELIA/ALUMNADO/SECRETARIA): ");
+        int resultado = GestorSolicitudes.asignarResponsable(id, responsable);
+        if (resultado == 0) System.out.println("Responsable asignado: #" + id + " -> " + responsable);
+        else if (resultado == -1) System.out.println("Error: no existe la solicitud " + id);
+        else if (resultado == -2) System.out.println("Error: responsable desconocido");
+        else if (resultado == -3) System.out.println("Error: la solicitud esta cerrada");
+    }
+
+    private static void buscarSolicitudes(Scanner teclado) {
+        String estado = leerTextoEnMayusculas(teclado, "Filtro estado (vacio = todos): ");
+        String tipo = leerTextoEnMayusculas(teclado, "Filtro tipo (vacio = todos): ");
+        String prioridad = leerTextoEnMayusculas(teclado, "Filtro prioridad (vacio = todos): ");
+        String responsable = leerTextoEnMayusculas(teclado, "Filtro responsable (vacio = todos): ");
+        String legajo = leerTexto(teclado, "Filtro legajo (vacio = todos): ");
+        List<Solicitud> resultado = GestorSolicitudes.buscar(estado, tipo, prioridad, responsable, legajo);
+        if (resultado.size() == 0) {
+            System.out.println("Sin resultados");
+            return;
+        }
+        for (int i = 0; i < resultado.size(); i++) {
+            System.out.println(formatearFila(resultado.get(i)));
+        }
+        System.out.println("Total: " + resultado.size() + " solicitud(es)");
+    }
+
+    private static String formatearFila(Solicitud s) {
+        return "#" + s.id + " | " + s.legajo + " | " + s.nombre + " | " + s.tipo + " | "
+                + s.prioridad + " | " + s.estado + " | "
+                + (s.responsable == null ? "sin asignar" : s.responsable);
+    }
+
+    // ------------------------------------------------------------------ entrada de datos
+
+    private static String leerTexto(Scanner teclado, String consigna) {
+        System.out.print(consigna);
+        return teclado.nextLine().trim();
+    }
+
+    private static String leerTextoEnMayusculas(Scanner teclado, String consigna) {
+        return leerTexto(teclado, consigna).toUpperCase();
+    }
+
+    // devuelve null (y avisa) si lo ingresado no es un numero
+    private static Integer leerId(Scanner teclado) {
+        String texto = leerTexto(teclado, "ID: ");
+        try {
+            return Integer.parseInt(texto);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: ID invalido");
+            return null;
         }
     }
 }
