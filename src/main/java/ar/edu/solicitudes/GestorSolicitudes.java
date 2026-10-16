@@ -7,6 +7,7 @@ import java.util.*;
 // Refactoring 1 (Extract Method + Rename): metodos cortos, sin duplicacion ni codigo muerto.
 // Refactoring 2 (Replace Type Code with Enum): estado, tipo, prioridad y responsable pasan de String a enum.
 // Refactoring 3 (Move Method): las reglas de negocio se mudaron a Estado, Prioridad, TipoSolicitud y Solicitud.
+// Refactoring 4 (Introduce Parameter Object): Estudiante, NuevaSolicitud y FiltroSolicitudes reemplazan listas largas de parametros.
 // Los codigos de error y la estructura general todavia no cambian.
 public class GestorSolicitudes {
 
@@ -47,9 +48,7 @@ public class GestorSolicitudes {
         String[] campos = linea.split(";");
         Solicitud s = new Solicitud();
         s.id = Integer.parseInt(campos[0]);
-        s.legajo = campos[1];
-        s.nombre = campos[2];
-        s.email = campos[3];
+        s.estudiante = new Estudiante(campos[1], campos[2], campos[3]);
         s.tipo = TipoSolicitud.desde(campos[4]);
         s.descripcion = campos[5];
         s.prioridad = Prioridad.desde(campos[6]);
@@ -62,7 +61,7 @@ public class GestorSolicitudes {
     private static String serializar(Solicitud s) {
         String responsable = s.responsable == null ? "-" : s.responsable.name();
         String urgente = s.urgente ? "1" : "0";
-        return s.id + ";" + s.legajo + ";" + s.nombre + ";" + s.email + ";" + s.tipo + ";"
+        return s.id + ";" + s.estudiante.legajo() + ";" + s.estudiante.nombre() + ";" + s.estudiante.email() + ";" + s.tipo + ";"
                 + s.descripcion + ";" + s.prioridad + ";" + s.estado + ";" + responsable + ";" + urgente;
     }
 
@@ -70,25 +69,24 @@ public class GestorSolicitudes {
 
     // devuelve el id de la nueva solicitud, o un codigo negativo si hay error
     // -1 legajo, -2 nombre, -3 email, -4 tipo
-    public static int registrar(String legajo, String nombre, String email, String textoTipo, String descripcion, boolean urgente) {
-        if (!esLegajoValido(legajo)) return -1;
-        if (!esNombreValido(nombre)) return -2;
-        if (!esEmailValido(email)) return -3;
-        TipoSolicitud tipo = TipoSolicitud.desde(textoTipo);
+    public static int registrar(NuevaSolicitud datos) {
+        Estudiante estudiante = datos.estudiante();
+        if (!esLegajoValido(estudiante.legajo())) return -1;
+        if (!esNombreValido(estudiante.nombre())) return -2;
+        if (!esEmailValido(estudiante.email())) return -3;
+        TipoSolicitud tipo = TipoSolicitud.desde(datos.tipo());
         if (tipo == null) return -4;
 
         Solicitud nueva = new Solicitud();
         nueva.id = proximoId;
         proximoId++;
-        nueva.legajo = legajo;
-        nueva.nombre = nombre;
-        nueva.email = email;
+        nueva.estudiante = estudiante;
         nueva.tipo = tipo;
-        nueva.descripcion = descripcion == null ? "" : descripcion;
-        nueva.prioridad = tipo.prioridadInicial(urgente);
+        nueva.descripcion = datos.descripcion() == null ? "" : datos.descripcion();
+        nueva.prioridad = tipo.prioridadInicial(datos.urgente());
         nueva.estado = Estado.PENDIENTE;
         nueva.responsable = null;
-        nueva.urgente = urgente;
+        nueva.urgente = datos.urgente();
         solicitudes.add(nueva);
         guardar();
         return nueva.id;
@@ -129,27 +127,13 @@ public class GestorSolicitudes {
         return encontrada;
     }
 
-    public static List<Solicitud> buscar(String estado, String tipo, String prioridad, String responsable, String legajo) {
+    public static List<Solicitud> buscar(FiltroSolicitudes filtro) {
         List<Solicitud> resultado = new ArrayList<Solicitud>();
         for (int i = 0; i < solicitudes.size(); i++) {
             Solicitud s = solicitudes.get(i);
-            if (cumpleFiltros(s, estado, tipo, prioridad, responsable, legajo)) resultado.add(s);
+            if (filtro.acepta(s)) resultado.add(s);
         }
         return resultado;
-    }
-
-    private static boolean cumpleFiltros(Solicitud s, String estado, String tipo, String prioridad, String responsable, String legajo) {
-        String responsableActual = s.responsable == null ? "" : s.responsable.name();
-        return coincide(estado, s.estado.name())
-                && coincide(tipo, s.tipo.name())
-                && coincide(prioridad, s.prioridad.name())
-                && coincide(responsable, responsableActual)
-                && coincide(legajo, s.legajo);
-    }
-
-    // un filtro vacio significa "todos"
-    private static boolean coincide(String filtro, String valor) {
-        return filtro.equals("") || valor.equals(filtro);
     }
 
     // ------------------------------------------------------------------ validaciones de entrada
