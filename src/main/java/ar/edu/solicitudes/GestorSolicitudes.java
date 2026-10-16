@@ -6,6 +6,7 @@ import java.util.*;
 // Gestor de solicitudes: carga, guarda, valida, calcula y reporta.
 // Refactoring 1 (Extract Method + Rename): metodos cortos, sin duplicacion ni codigo muerto.
 // Refactoring 2 (Replace Type Code with Enum): estado, tipo, prioridad y responsable pasan de String a enum.
+// Refactoring 3 (Move Method): las reglas de negocio se mudaron a Estado, Prioridad, TipoSolicitud y Solicitud.
 // Los codigos de error y la estructura general todavia no cambian.
 public class GestorSolicitudes {
 
@@ -84,7 +85,7 @@ public class GestorSolicitudes {
         nueva.email = email;
         nueva.tipo = tipo;
         nueva.descripcion = descripcion == null ? "" : descripcion;
-        nueva.prioridad = calcularPrioridad(tipo, urgente);
+        nueva.prioridad = tipo.prioridadInicial(urgente);
         nueva.estado = Estado.PENDIENTE;
         nueva.responsable = null;
         nueva.urgente = urgente;
@@ -99,8 +100,8 @@ public class GestorSolicitudes {
         if (s == null) return -1;
         Estado nuevoEstado = Estado.desde(textoEstado);
         if (nuevoEstado == null) return -2;
-        if (!esTransicionPermitida(s.estado, nuevoEstado)) return -3;
-        if (nuevoEstado == Estado.EN_PROCESO && s.responsable == null) return -4;
+        if (!s.estado.puedePasarA(nuevoEstado)) return -3;
+        if (nuevoEstado == Estado.EN_PROCESO && !s.tieneResponsable()) return -4;
         s.estado = nuevoEstado;
         guardar();
         return 0;
@@ -112,7 +113,7 @@ public class GestorSolicitudes {
         if (s == null) return -1;
         Responsable responsable = Responsable.desde(textoResponsable);
         if (responsable == null) return -2;
-        if (estaCerrada(s)) return -3;
+        if (s.estaCerrada()) return -3;
         s.responsable = responsable;
         guardar();
         return 0;
@@ -151,7 +152,7 @@ public class GestorSolicitudes {
         return filtro.equals("") || valor.equals(filtro);
     }
 
-    // ------------------------------------------------------------------ reglas de negocio
+    // ------------------------------------------------------------------ validaciones de entrada
 
     private static boolean esLegajoValido(String legajo) {
         if (legajo == null || legajo.length() != 5) return false;
@@ -167,44 +168,6 @@ public class GestorSolicitudes {
 
     private static boolean esEmailValido(String email) {
         return email != null && email.indexOf("@") >= 1 && email.lastIndexOf(".") >= email.indexOf("@");
-    }
-
-    private static boolean estaCerrada(Solicitud s) {
-        return s.estado == Estado.RESUELTA || s.estado == Estado.RECHAZADA;
-    }
-
-    private static boolean esTransicionPermitida(Estado actual, Estado nuevo) {
-        if (actual == Estado.PENDIENTE) return nuevo == Estado.EN_PROCESO || nuevo == Estado.RECHAZADA;
-        if (actual == Estado.EN_PROCESO) return nuevo == Estado.RESUELTA || nuevo == Estado.RECHAZADA;
-        return false;
-    }
-
-    private static Prioridad calcularPrioridad(TipoSolicitud tipo, boolean urgente) {
-        Prioridad prioridad = prioridadBase(tipo);
-        return urgente ? subirPrioridad(prioridad) : prioridad;
-    }
-
-    private static Prioridad prioridadBase(TipoSolicitud tipo) {
-        if (tipo == TipoSolicitud.REVISION_NOTA) return Prioridad.ALTA;
-        if (tipo == TipoSolicitud.EQUIVALENCIA) return Prioridad.MEDIA;
-        if (tipo == TipoSolicitud.BAJA_MATERIA) return Prioridad.MEDIA;
-        return Prioridad.BAJA;
-    }
-
-    private static Prioridad subirPrioridad(Prioridad prioridad) {
-        if (prioridad == Prioridad.BAJA) return Prioridad.MEDIA;
-        if (prioridad == Prioridad.MEDIA) return Prioridad.ALTA;
-        return prioridad;
-    }
-
-    // plazo de respuesta en dias habiles
-    public static int calcularPlazo(Solicitud s) {
-        int dias;
-        if (s.prioridad == Prioridad.ALTA) dias = 3;
-        else if (s.prioridad == Prioridad.MEDIA) dias = 5;
-        else dias = 10;
-        if (s.tipo == TipoSolicitud.EQUIVALENCIA) dias = dias + 5;
-        return dias;
     }
 
     // ------------------------------------------------------------------ reporte
@@ -245,7 +208,7 @@ public class GestorSolicitudes {
     private static int contarSinResponsable() {
         int cantidad = 0;
         for (int i = 0; i < solicitudes.size(); i++) {
-            if (solicitudes.get(i).responsable == null) cantidad++;
+            if (!solicitudes.get(i).tieneResponsable()) cantidad++;
         }
         return cantidad;
     }
@@ -254,7 +217,7 @@ public class GestorSolicitudes {
         if (solicitudes.size() == 0) return 0.0;
         int suma = 0;
         for (int i = 0; i < solicitudes.size(); i++) {
-            suma = suma + calcularPlazo(solicitudes.get(i));
+            suma = suma + solicitudes.get(i).calcularPlazo();
         }
         double promedio = (double) suma / solicitudes.size();
         return Math.round(promedio * 10) / 10.0;

@@ -11,4 +11,17 @@ public class Solicitud {
     public Estado estado;
     public Responsable responsable;
     public boolean urgente;
+
+    // plazo de respuesta en dias habiles: depende de la prioridad y del tipo de tramite
+    public int calcularPlazo() {
+        return prioridad.plazoBaseDias() + tipo.plazoExtraDias();
+    }
+
+    public boolean estaCerrada() {
+        return estado.esFinal();
+    }
+
+    public boolean tieneResponsable() {
+        return responsable != null;
+    }
 }
