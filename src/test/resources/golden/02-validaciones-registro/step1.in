@@ -1,0 +1,80 @@
+1
+1234
+Ana Perez
+ana@mail.com
+CERTIFICADO
+legajo corto
+n
+1
+123456
+Ana Perez
+ana@mail.com
+CERTIFICADO
+legajo largo
+n
+1
+12a45
+Ana Perez
+ana@mail.com
+CERTIFICADO
+legajo con letra
+n
+1
+12345
+   
+ana@mail.com
+CERTIFICADO
+nombre vacio
+n
+1
+12345
+Ana Perez
+ana
+CERTIFICADO
+email sin arroba
+n
+1
+12345
+Ana Perez
+ana@mail
+CERTIFICADO
+email sin punto
+n
+1
+12345
+Ana Perez
+@mail.com
+CERTIFICADO
+email arroba al inicio
+n
+1
+12345
+Ana Perez
+a.b@c
+CERTIFICADO
+punto antes de arroba
+n
+1
+12345
+Ana Perez
+ana@mail.com
+PASAPORTE
+tipo desconocido
+n
+1
+12345
+Ana Perez
+ana@mail.com
+CERTIFICADO
+
+n
+9
+hola
+
+4
+
+
+
+
+
+0

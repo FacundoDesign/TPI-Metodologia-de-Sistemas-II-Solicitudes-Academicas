@@ -1,0 +1,181 @@
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Legajo: Nombre: Email: Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): Descripcion: Urgente (s/n): Solicitud registrada con ID 1 (prioridad BAJA, plazo 10 dias)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Legajo: Nombre: Email: Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): Descripcion: Urgente (s/n): Solicitud registrada con ID 2 (prioridad ALTA, plazo 3 dias)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Legajo: Nombre: Email: Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): Descripcion: Urgente (s/n): Solicitud registrada con ID 3 (prioridad ALTA, plazo 8 dias)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Legajo: Nombre: Email: Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): Descripcion: Urgente (s/n): Solicitud registrada con ID 4 (prioridad MEDIA, plazo 5 dias)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Legajo: Nombre: Email: Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): Descripcion: Urgente (s/n): Solicitud registrada con ID 5 (prioridad MEDIA, plazo 5 dias)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: ID: Responsable (BEDELIA/ALUMNADO/SECRETARIA): Responsable asignado: #1 -> BEDELIA
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: ID: Responsable (BEDELIA/ALUMNADO/SECRETARIA): Responsable asignado: #2 -> ALUMNADO
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: ID: Responsable (BEDELIA/ALUMNADO/SECRETARIA): Responsable asignado: #3 -> BEDELIA
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: ID: Nuevo estado: Estado actualizado: #1 -> EN_PROCESO
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: ID: Nuevo estado: Estado actualizado: #3 -> EN_PROCESO
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: ID: Nuevo estado: Estado actualizado: #3 -> RESUELTA
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): #2 | 12345 | Ana Perez | REVISION_NOTA | ALTA | PENDIENTE | ALUMNADO
+#4 | 34567 | Marta Diaz | BAJA_MATERIA | MEDIA | PENDIENTE | sin asignar
+#5 | 45678 | Juan Ruiz | CERTIFICADO | MEDIA | PENDIENTE | sin asignar
+Total: 3 solicitud(es)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): #1 | 12345 | Ana Perez | CERTIFICADO | BAJA | EN_PROCESO | BEDELIA
+Total: 1 solicitud(es)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): #1 | 12345 | Ana Perez | CERTIFICADO | BAJA | EN_PROCESO | BEDELIA
+#5 | 45678 | Juan Ruiz | CERTIFICADO | MEDIA | PENDIENTE | sin asignar
+Total: 2 solicitud(es)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): #2 | 12345 | Ana Perez | REVISION_NOTA | ALTA | PENDIENTE | ALUMNADO
+#3 | 23456 | Luis Gomez | EQUIVALENCIA | ALTA | RESUELTA | BEDELIA
+Total: 2 solicitud(es)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): #1 | 12345 | Ana Perez | CERTIFICADO | BAJA | EN_PROCESO | BEDELIA
+#3 | 23456 | Luis Gomez | EQUIVALENCIA | ALTA | RESUELTA | BEDELIA
+Total: 2 solicitud(es)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): #1 | 12345 | Ana Perez | CERTIFICADO | BAJA | EN_PROCESO | BEDELIA
+#2 | 12345 | Ana Perez | REVISION_NOTA | ALTA | PENDIENTE | ALUMNADO
+Total: 2 solicitud(es)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): #5 | 45678 | Juan Ruiz | CERTIFICADO | MEDIA | PENDIENTE | sin asignar
+Total: 1 solicitud(es)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): Sin resultados
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): Sin resultados
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Hasta luego

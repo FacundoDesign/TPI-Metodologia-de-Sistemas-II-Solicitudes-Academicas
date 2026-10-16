@@ -1,0 +1,36 @@
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): Sin resultados
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: --- REPORTE ---
+Total de solicitudes: 0
+Por estado:
+  PENDIENTE: 0
+  EN_PROCESO: 0
+  RESUELTA: 0
+  RECHAZADA: 0
+Por prioridad:
+  ALTA: 0
+  MEDIA: 0
+  BAJA: 0
+Sin responsable asignado: 0
+Plazo promedio de respuesta: 0.0 dias
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Hasta luego
