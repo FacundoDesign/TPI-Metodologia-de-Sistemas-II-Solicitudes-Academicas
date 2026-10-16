@@ -1,0 +1,40 @@
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Legajo: Nombre: Email: Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): Descripcion: Urgente (s/n): Solicitud registrada con ID 1 (prioridad MEDIA, plazo 10 dias)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Legajo: Nombre: Email: Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): Descripcion: Urgente (s/n): Solicitud registrada con ID 2 (prioridad MEDIA, plazo 5 dias)
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: ID: Responsable (BEDELIA/ALUMNADO/SECRETARIA): Responsable asignado: #1 -> SECRETARIA
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: ID: Nuevo estado: Estado actualizado: #1 -> EN_PROCESO
+=== GESTION DE SOLICITUDES ACADEMICAS ===
+1. Registrar solicitud
+2. Cambiar estado
+3. Asignar responsable
+4. Buscar / filtrar
+5. Reporte
+0. Salir
+Opcion: Hasta luego
