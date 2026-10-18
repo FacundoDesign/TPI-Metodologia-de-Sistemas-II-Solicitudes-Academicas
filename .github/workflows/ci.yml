@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # trae los tags (estado-inicial) para comparar antes/despues
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # Fail-fast: si compila mal o falla una prueba, el pipeline se detiene aca
+      - name: Compilar, probar y medir cobertura (Maven + JaCoCo)
+        run: mvn -B verify
+
+      - name: Verificar que el comportamiento externo no cambio (contra estado-inicial)
+        run: ./scripts/comparar-versiones.sh
+
+      - name: Publicar reporte de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-jacoco
+          path: target/site/jacoco

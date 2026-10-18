@@ -1,0 +1,8 @@
+01-registro-y-prioridades        salida y archivo de datos identicos: SI
+02-validaciones-registro         salida y archivo de datos identicos: SI
+03-flujo-estados                 salida y archivo de datos identicos: SI
+04-busqueda-filtros              salida y archivo de datos identicos: SI
+05-reporte-vacio                 salida y archivo de datos identicos: SI
+06-persistencia                  salida y archivo de datos identicos: SI
+
+Escenarios identicos: 6 de 6

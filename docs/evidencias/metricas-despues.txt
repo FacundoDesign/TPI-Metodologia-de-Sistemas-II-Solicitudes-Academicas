@@ -1,0 +1,24 @@
+$ python3 scripts/metricas.py    # en el estado final
+archivo                                LOC  metod  decis  liter  stat catchV
+ArchivoDatosException.java               9      2      0      0     0      0
+ConsolaMenu.java                       131     14     12      0     0      0
+CsvSolicitudRepository.java             97      7     13      1     0      0
+Enums.java                              19      3      4      0     0      0
+Estado.java                             17      3      6      0     0      0
+Estudiante.java                         21      3     10      0     0      0
+FiltroSolicitudes.java                  24      3      7      0     0      0
+Main.java                               17      1      0      0     0      0
+NuevaSolicitud.java                      6      0      1      0     0      0
+Prioridad.java                          20      3      2      0     0      0
+ReporteSolicitudes.java                 27      2      5      0     0      0
+Responsable.java                         7      1      0      0     0      0
+Solicitud.java                          74     15      4      0     0      0
+SolicitudException.java                  6      1      0      0     0      0
+SolicitudRepository.java                 6      0      0      0     0      0
+SolicitudService.java                   55      9      5      0     0      0
+TipoSolicitud.java                      22      3      1      0     0      0
+----------------------------------------------------------------------------
+archivos=17  LOC=558  metodos=70  decisiones=70
+comparaciones con literal=1  campos static mutables=0  catch vacios=0
+metodo mas largo: CsvSolicitudRepository.parsearLinea (21 lineas)   max parametros: Solicitud.Solicitud (5)
+LOC promedio por archivo=32.8  decisiones por archivo=4.1

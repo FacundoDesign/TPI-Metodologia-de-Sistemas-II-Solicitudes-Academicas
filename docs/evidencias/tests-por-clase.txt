@@ -1,0 +1,15 @@
+ArchivoDatosCorruptoTest                      3
+ComportamientoExternoTest                     7
+ConsolaMenuTest                               8
+CsvSolicitudRepositoryTest                    8
+EnumsDominioTest                              5
+EstadoTest                                    5
+EstudianteTest                                6
+FiltroSolicitudesTest                         5
+PrioridadTest                                 2
+ReporteSolicitudesTest                        3
+RepositorioEnMemoriaContratoTest              0
+SolicitudReglasTest                           6
+SolicitudServiceTest                          13
+SolicitudTest                                 5
+TipoSolicitudTest                             3
