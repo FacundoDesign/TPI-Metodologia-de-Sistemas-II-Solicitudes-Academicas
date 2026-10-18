@@ -43,8 +43,10 @@ public class CsvSolicitudRepositoryTest extends ContratoSolicitudRepository {
     @Test
     public void unPuntoYComaEnUnTextoNoCorrompeElRegistro() throws Exception {
         SolicitudRepository repo = crear();
-        Solicitud conSeparador = Solicitud.reconstruir(1, new Estudiante("12345", "Perez; Ana", "ana@mail.com"),
-                TipoSolicitud.CERTIFICADO, "Nota; urgente para beca", Prioridad.BAJA, Estado.PENDIENTE, null, false);
+        Estudiante estudiante = new Estudiante("12345", "Perez; Ana", "ana@mail.com");
+        Solicitud conSeparador = Solicitud.reconstruir(1,
+                new NuevaSolicitud(estudiante, TipoSolicitud.CERTIFICADO, "Nota; urgente para beca", false),
+                Prioridad.BAJA, Estado.PENDIENTE, null);
 
         repo.guardarTodas(List.of(conSeparador));
         List<Solicitud> leidas = repo.cargarTodas();
@@ -56,8 +58,10 @@ public class CsvSolicitudRepositoryTest extends ContratoSolicitudRepository {
     @Test
     public void tambienSePreservaLaBarraInvertida() throws Exception {
         SolicitudRepository repo = crear();
-        Solicitud conBarra = Solicitud.reconstruir(1, DatosDePrueba.ana(), TipoSolicitud.CERTIFICADO,
-                "ruta C:" + BARRA + "tmp" + BARRA + ";fin" + BARRA, Prioridad.BAJA, Estado.PENDIENTE, null, false);
+        String descripcion = "ruta C:" + BARRA + "tmp" + BARRA + ";fin" + BARRA;
+        Solicitud conBarra = Solicitud.reconstruir(1,
+                new NuevaSolicitud(DatosDePrueba.ana(), TipoSolicitud.CERTIFICADO, descripcion, false),
+                Prioridad.BAJA, Estado.PENDIENTE, null);
 
         repo.guardarTodas(List.of(conBarra));
 

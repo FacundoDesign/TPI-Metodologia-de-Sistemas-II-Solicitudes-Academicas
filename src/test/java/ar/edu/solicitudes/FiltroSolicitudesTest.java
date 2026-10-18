@@ -9,8 +9,8 @@ public class FiltroSolicitudesTest {
 
     private Solicitud solicitudDeEjemplo() {
         Estudiante estudiante = new Estudiante("12345", "Ana Perez", "ana@mail.com");
-        return Solicitud.reconstruir(1, estudiante, TipoSolicitud.CERTIFICADO, "descripcion", Prioridad.BAJA,
-                Estado.PENDIENTE, null, false);
+        return Solicitud.reconstruir(1, new NuevaSolicitud(estudiante, TipoSolicitud.CERTIFICADO, "descripcion", false),
+                Prioridad.BAJA, Estado.PENDIENTE, null);
     }
 
     @Test
@@ -45,5 +45,10 @@ public class FiltroSolicitudesTest {
         Solicitud s = solicitudDeEjemplo();
         assertTrue(new FiltroSolicitudes("PENDIENTE", "CERTIFICADO", "", "", "").acepta(s));
         assertFalse(new FiltroSolicitudes("PENDIENTE", "EQUIVALENCIA", "", "", "").acepta(s));
+    }
+
+    @Test
+    public void unCriterioNuloEquivaleATodos() {
+        assertTrue(new FiltroSolicitudes(null, null, null, null, null).acepta(solicitudDeEjemplo()));
     }
 }

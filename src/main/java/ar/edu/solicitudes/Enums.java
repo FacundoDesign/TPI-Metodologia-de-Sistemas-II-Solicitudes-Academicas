@@ -13,4 +13,14 @@ final class Enums {
         }
         return null;
     }
+
+    // "A/B/C": los nombres de las constantes, para mostrar las opciones validas sin escribirlas a mano
+    static <E extends Enum<E>> String opciones(Class<E> tipo) {
+        StringBuilder texto = new StringBuilder();
+        for (E constante : tipo.getEnumConstants()) {
+            if (texto.length() > 0) texto.append("/");
+            texto.append(constante.name());
+        }
+        return texto.toString();
+    }
 }

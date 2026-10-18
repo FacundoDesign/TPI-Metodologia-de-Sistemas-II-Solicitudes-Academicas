@@ -35,4 +35,10 @@ public class EnumsDominioTest {
         assertEquals("[PENDIENTE, EN_PROCESO, RESUELTA, RECHAZADA]", java.util.Arrays.toString(Estado.values()));
         assertEquals("[ALTA, MEDIA, BAJA]", java.util.Arrays.toString(Prioridad.values()));
     }
+
+    @Test
+    public void opcionesListaLosNombresSeparadosPorBarra() {
+        assertEquals("CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA", Enums.opciones(TipoSolicitud.class));
+        assertEquals("BEDELIA/ALUMNADO/SECRETARIA", Enums.opciones(Responsable.class));
+    }
 }

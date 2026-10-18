@@ -13,29 +13,27 @@ public class Solicitud {
     private Estado estado;
     private Responsable responsable;
 
-    private Solicitud(int id, Estudiante estudiante, TipoSolicitud tipo, String descripcion, Prioridad prioridad,
-                      Estado estado, Responsable responsable, boolean urgente) {
+    private Solicitud(int id, NuevaSolicitud datos, Prioridad prioridad, Estado estado, Responsable responsable) {
         this.id = id;
-        this.estudiante = estudiante;
-        this.tipo = tipo;
-        this.descripcion = descripcion;
+        this.estudiante = datos.estudiante();
+        this.tipo = datos.tipo();
+        this.descripcion = datos.descripcion();
+        this.urgente = datos.urgente();
         this.prioridad = prioridad;
         this.estado = estado;
         this.responsable = responsable;
-        this.urgente = urgente;
     }
 
     // Alta de una solicitud nueva: nace PENDIENTE, sin responsable y con la prioridad que corresponde al tipo.
     public static Solicitud nueva(int id, NuevaSolicitud datos) {
-        Prioridad prioridad = datos.tipo().prioridadInicial(datos.urgente());
-        return new Solicitud(id, datos.estudiante(), datos.tipo(), datos.descripcion(), prioridad,
-                Estado.PENDIENTE, null, datos.urgente());
+        return new Solicitud(id, datos, datos.tipo().prioridadInicial(datos.urgente()), Estado.PENDIENTE, null);
     }
 
     // Reconstruccion de una solicitud ya existente (la usa el repositorio al leer los datos guardados).
-    public static Solicitud reconstruir(int id, Estudiante estudiante, TipoSolicitud tipo, String descripcion,
-                                        Prioridad prioridad, Estado estado, Responsable responsable, boolean urgente) {
-        return new Solicitud(id, estudiante, tipo, descripcion, prioridad, estado, responsable, urgente);
+    // Reutiliza NuevaSolicitud como Parameter Object: 5 parametros en lugar de 8.
+    public static Solicitud reconstruir(int id, NuevaSolicitud datos, Prioridad prioridad, Estado estado,
+                                        Responsable responsable) {
+        return new Solicitud(id, datos, prioridad, estado, responsable);
     }
 
     public int id() {
