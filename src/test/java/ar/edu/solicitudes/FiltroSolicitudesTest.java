@@ -8,13 +8,9 @@ import org.junit.Test;
 public class FiltroSolicitudesTest {
 
     private Solicitud solicitudDeEjemplo() {
-        Solicitud s = new Solicitud();
-        s.estudiante = new Estudiante("12345", "Ana Perez", "ana@mail.com");
-        s.tipo = TipoSolicitud.CERTIFICADO;
-        s.prioridad = Prioridad.BAJA;
-        s.estado = Estado.PENDIENTE;
-        s.responsable = null;
-        return s;
+        Estudiante estudiante = new Estudiante("12345", "Ana Perez", "ana@mail.com");
+        return Solicitud.reconstruir(1, estudiante, TipoSolicitud.CERTIFICADO, "descripcion", Prioridad.BAJA,
+                Estado.PENDIENTE, null, false);
     }
 
     @Test
@@ -39,7 +35,7 @@ public class FiltroSolicitudesTest {
     public void filtraPorResponsableYUnaSolicitudSinResponsableNoCoincideConNinguno() {
         Solicitud s = solicitudDeEjemplo();
         assertFalse(new FiltroSolicitudes("", "", "", "BEDELIA", "").acepta(s));
-        s.responsable = Responsable.BEDELIA;
+        s.asignarA(Responsable.BEDELIA);
         assertTrue(new FiltroSolicitudes("", "", "", "BEDELIA", "").acepta(s));
         assertFalse(new FiltroSolicitudes("", "", "", "ALUMNADO", "").acepta(s));
     }

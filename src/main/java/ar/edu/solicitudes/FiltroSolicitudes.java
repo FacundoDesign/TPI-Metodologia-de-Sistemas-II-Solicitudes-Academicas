@@ -5,12 +5,12 @@ package ar.edu.solicitudes;
 public record FiltroSolicitudes(String estado, String tipo, String prioridad, String responsable, String legajo) {
 
     public boolean acepta(Solicitud s) {
-        String responsableActual = s.tieneResponsable() ? s.responsable.name() : "";
-        return coincide(estado, s.estado.name())
-                && coincide(tipo, s.tipo.name())
-                && coincide(prioridad, s.prioridad.name())
+        String responsableActual = s.tieneResponsable() ? s.responsable().name() : "";
+        return coincide(estado, s.estado().name())
+                && coincide(tipo, s.tipo().name())
+                && coincide(prioridad, s.prioridad().name())
                 && coincide(responsable, responsableActual)
-                && coincide(legajo, s.estudiante.legajo());
+                && coincide(legajo, s.estudiante().legajo());
     }
 
     private static boolean coincide(String criterio, String valor) {
