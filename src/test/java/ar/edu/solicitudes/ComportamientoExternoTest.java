@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
@@ -100,31 +99,9 @@ public class ComportamientoExternoTest {
     }
 
     private String ejecutar(Path directorioTrabajo, Path entrada) throws IOException, InterruptedException {
-        String java = Path.of(System.getProperty("java.home"), "bin", "java").toString();
-        ProcessBuilder pb = new ProcessBuilder(java, "-cp", classpathAbsoluto(), "ar.edu.solicitudes.Main");
-        pb.directory(directorioTrabajo.toFile());
-        pb.redirectInput(entrada.toFile());
-        pb.redirectError(ProcessBuilder.Redirect.DISCARD);
-        Process p = pb.start();
-        byte[] salida = p.getInputStream().readAllBytes();
-        if (!p.waitFor(30, TimeUnit.SECONDS)) {
-            p.destroyForcibly();
-            throw new IllegalStateException("El programa no termino a tiempo");
-        }
-        assertEquals("El programa debe terminar con codigo 0", 0, p.exitValue());
-        return new String(salida, StandardCharsets.UTF_8);
-    }
-
-    /** El proceso hijo corre en otro directorio: el classpath tiene que ser absoluto. */
-    private String classpathAbsoluto() {
-        StringBuilder sb = new StringBuilder();
-        for (String entrada : System.getProperty("java.class.path").split(File.pathSeparator)) {
-            if (sb.length() > 0) {
-                sb.append(File.pathSeparator);
-            }
-            sb.append(new File(entrada).getAbsolutePath());
-        }
-        return sb.toString();
+        ProcesoAplicacion.Resultado r = ProcesoAplicacion.ejecutar(directorioTrabajo, entrada);
+        assertEquals("El programa debe terminar con codigo 0", 0, r.codigo());
+        return r.salida();
     }
 
     private Path recursosGolden() throws Exception {

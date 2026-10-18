@@ -7,8 +7,9 @@ import java.util.*;
 // Refactoring 1 (Extract Method + Rename): metodos cortos, sin duplicacion ni codigo muerto.
 // Refactoring 2 (Replace Type Code with Enum): estado, tipo, prioridad y responsable pasan de String a enum.
 // Refactoring 3 (Move Method): las reglas de negocio se mudaron a Estado, Prioridad, TipoSolicitud y Solicitud.
-// Refactoring 4 (Introduce Parameter Object): Estudiante, NuevaSolicitud y FiltroSolicitudes reemplazan listas largas de parametros.
-// Los codigos de error y la estructura general todavia no cambian.
+// Refactoring 4 (Introduce Parameter Object): Estudiante, NuevaSolicitud y FiltroSolicitudes.
+// Refactoring 5 (Replace Error Code with Exception): los codigos -1..-4 pasan a SolicitudException y los
+// catch vacios a ArchivoDatosException. La estructura estatica todavia no cambia.
 public class GestorSolicitudes {
 
     public static List<Solicitud> solicitudes = new ArrayList<Solicitud>();
@@ -18,44 +19,55 @@ public class GestorSolicitudes {
     // ------------------------------------------------------------------ persistencia
 
     public static void cargar() {
-        try {
-            File archivo = new File(ARCHIVO_DATOS);
-            if (!archivo.exists()) return;
-            BufferedReader lector = new BufferedReader(new FileReader(archivo));
+        File archivo = new File(ARCHIVO_DATOS);
+        if (!archivo.exists()) return;
+        try (BufferedReader lector = new BufferedReader(new FileReader(archivo))) {
             String linea;
+            int numeroDeLinea = 0;
             while ((linea = lector.readLine()) != null) {
-                Solicitud s = parsearLinea(linea);
+                numeroDeLinea++;
+                Solicitud s = parsearLinea(linea, numeroDeLinea);
                 solicitudes.add(s);
                 if (s.id >= proximoId) proximoId = s.id + 1;
             }
-            lector.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
+            throw new ArchivoDatosException("no se pudo leer " + ARCHIVO_DATOS, e);
         }
     }
 
     public static void guardar() {
-        try {
-            PrintWriter escritor = new PrintWriter(new FileWriter(ARCHIVO_DATOS));
+        try (PrintWriter escritor = new PrintWriter(new FileWriter(ARCHIVO_DATOS))) {
             for (int i = 0; i < solicitudes.size(); i++) {
                 escritor.println(serializar(solicitudes.get(i)));
             }
-            escritor.close();
-        } catch (Exception e) {
+            if (escritor.checkError()) throw new IOException("error de escritura");
+        } catch (IOException e) {
+            throw new ArchivoDatosException("no se pudo guardar " + ARCHIVO_DATOS, e);
         }
     }
 
-    private static Solicitud parsearLinea(String linea) {
-        String[] campos = linea.split(";");
-        Solicitud s = new Solicitud();
-        s.id = Integer.parseInt(campos[0]);
-        s.estudiante = new Estudiante(campos[1], campos[2], campos[3]);
-        s.tipo = TipoSolicitud.desde(campos[4]);
-        s.descripcion = campos[5];
-        s.prioridad = Prioridad.desde(campos[6]);
-        s.estado = Estado.desde(campos[7]);
-        s.responsable = Responsable.desde(campos[8]);
-        s.urgente = campos[9].equals("1");
-        return s;
+    private static Solicitud parsearLinea(String linea, int numeroDeLinea) {
+        String[] campos = linea.split(";", -1);
+        if (campos.length != 10) {
+            throw new ArchivoDatosException(ARCHIVO_DATOS + ", linea " + numeroDeLinea + ": se esperaban 10 campos y hay " + campos.length);
+        }
+        try {
+            Solicitud s = new Solicitud();
+            s.id = Integer.parseInt(campos[0]);
+            s.estudiante = new Estudiante(campos[1], campos[2], campos[3]);
+            s.tipo = TipoSolicitud.desde(campos[4]);
+            s.descripcion = campos[5];
+            s.prioridad = Prioridad.desde(campos[6]);
+            s.estado = Estado.desde(campos[7]);
+            s.responsable = Responsable.desde(campos[8]);
+            s.urgente = campos[9].equals("1");
+            if (s.tipo == null || s.prioridad == null || s.estado == null) {
+                throw new ArchivoDatosException(ARCHIVO_DATOS + ", linea " + numeroDeLinea + ": tipo, prioridad o estado desconocido");
+            }
+            return s;
+        } catch (NumberFormatException | SolicitudException e) {
+            throw new ArchivoDatosException(ARCHIVO_DATOS + ", linea " + numeroDeLinea + ": " + e.getMessage(), e);
+        }
     }
 
     private static String serializar(Solicitud s) {
@@ -67,20 +79,14 @@ public class GestorSolicitudes {
 
     // ------------------------------------------------------------------ casos de uso
 
-    // devuelve el id de la nueva solicitud, o un codigo negativo si hay error
-    // -1 legajo, -2 nombre, -3 email, -4 tipo
-    public static int registrar(NuevaSolicitud datos) {
-        Estudiante estudiante = datos.estudiante();
-        if (!esLegajoValido(estudiante.legajo())) return -1;
-        if (!esNombreValido(estudiante.nombre())) return -2;
-        if (!esEmailValido(estudiante.email())) return -3;
+    public static Solicitud registrar(NuevaSolicitud datos) {
         TipoSolicitud tipo = TipoSolicitud.desde(datos.tipo());
-        if (tipo == null) return -4;
+        if (tipo == null) throw new SolicitudException("tipo de solicitud desconocido");
 
         Solicitud nueva = new Solicitud();
         nueva.id = proximoId;
         proximoId++;
-        nueva.estudiante = estudiante;
+        nueva.estudiante = datos.estudiante();
         nueva.tipo = tipo;
         nueva.descripcion = datos.descripcion() == null ? "" : datos.descripcion();
         nueva.prioridad = tipo.prioridadInicial(datos.urgente());
@@ -89,32 +95,36 @@ public class GestorSolicitudes {
         nueva.urgente = datos.urgente();
         solicitudes.add(nueva);
         guardar();
-        return nueva.id;
+        return nueva;
     }
 
-    // 0 ok, -1 no existe, -2 estado desconocido, -3 transicion invalida, -4 falta responsable
-    public static int cambiarEstado(int id, String textoEstado) {
-        Solicitud s = buscarPorId(id);
-        if (s == null) return -1;
+    public static void cambiarEstado(int id, String textoEstado) {
+        Solicitud s = obtenerPorId(id);
         Estado nuevoEstado = Estado.desde(textoEstado);
-        if (nuevoEstado == null) return -2;
-        if (!s.estado.puedePasarA(nuevoEstado)) return -3;
-        if (nuevoEstado == Estado.EN_PROCESO && !s.tieneResponsable()) return -4;
+        if (nuevoEstado == null) throw new SolicitudException("estado desconocido");
+        if (!s.estado.puedePasarA(nuevoEstado)) {
+            throw new SolicitudException("transicion invalida " + s.estado + " -> " + nuevoEstado);
+        }
+        if (nuevoEstado == Estado.EN_PROCESO && !s.tieneResponsable()) {
+            throw new SolicitudException("debe asignar responsable antes de pasar a EN_PROCESO");
+        }
         s.estado = nuevoEstado;
         guardar();
-        return 0;
     }
 
-    // 0 ok, -1 no existe, -2 responsable desconocido, -3 solicitud cerrada
-    public static int asignarResponsable(int id, String textoResponsable) {
-        Solicitud s = buscarPorId(id);
-        if (s == null) return -1;
+    public static void asignarResponsable(int id, String textoResponsable) {
+        Solicitud s = obtenerPorId(id);
         Responsable responsable = Responsable.desde(textoResponsable);
-        if (responsable == null) return -2;
-        if (s.estaCerrada()) return -3;
+        if (responsable == null) throw new SolicitudException("responsable desconocido");
+        if (s.estaCerrada()) throw new SolicitudException("la solicitud esta cerrada");
         s.responsable = responsable;
         guardar();
-        return 0;
+    }
+
+    private static Solicitud obtenerPorId(int id) {
+        Solicitud s = buscarPorId(id);
+        if (s == null) throw new SolicitudException("no existe la solicitud " + id);
+        return s;
     }
 
     public static Solicitud buscarPorId(int id) {
@@ -134,24 +144,6 @@ public class GestorSolicitudes {
             if (filtro.acepta(s)) resultado.add(s);
         }
         return resultado;
-    }
-
-    // ------------------------------------------------------------------ validaciones de entrada
-
-    private static boolean esLegajoValido(String legajo) {
-        if (legajo == null || legajo.length() != 5) return false;
-        for (int i = 0; i < legajo.length(); i++) {
-            if (!Character.isDigit(legajo.charAt(i))) return false;
-        }
-        return true;
-    }
-
-    private static boolean esNombreValido(String nombre) {
-        return nombre != null && !nombre.trim().equals("");
-    }
-
-    private static boolean esEmailValido(String email) {
-        return email != null && email.indexOf("@") >= 1 && email.lastIndexOf(".") >= email.indexOf("@");
     }
 
     // ------------------------------------------------------------------ reporte
