@@ -25,8 +25,9 @@ abstract class ContratoSolicitudRepository {
     public void loGuardadoSeRecuperaIgual() throws Exception {
         SolicitudRepository repo = crear();
         Solicitud abierta = DatosDePrueba.solicitud(1, TipoSolicitud.EQUIVALENCIA, Prioridad.MEDIA, Estado.EN_PROCESO, Responsable.BEDELIA);
-        Solicitud sinResponsable = Solicitud.reconstruir(2, new Estudiante("23456", "Luis Gomez", "luis@mail.com"),
-                TipoSolicitud.CERTIFICADO, "otra descripcion", Prioridad.BAJA, Estado.PENDIENTE, null, true);
+        Estudiante luis = new Estudiante("23456", "Luis Gomez", "luis@mail.com");
+        Solicitud sinResponsable = Solicitud.reconstruir(2, new NuevaSolicitud(luis, TipoSolicitud.CERTIFICADO, "otra descripcion", true),
+                Prioridad.BAJA, Estado.PENDIENTE, null);
 
         repo.guardarTodas(List.of(abierta, sinResponsable));
         List<Solicitud> leidas = repo.cargarTodas();

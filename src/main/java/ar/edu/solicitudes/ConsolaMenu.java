@@ -64,7 +64,7 @@ public class ConsolaMenu {
         String legajo = leerTexto("Legajo: ");
         String nombre = leerTexto("Nombre: ");
         String email = leerTexto("Email: ");
-        String textoTipo = leerTextoEnMayusculas("Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): ");
+        String textoTipo = leerTextoEnMayusculas("Tipo (" + Enums.opciones(TipoSolicitud.class) + "): ");
         String descripcion = leerTexto("Descripcion: ");
         boolean urgente = leerTexto("Urgente (s/n): ").equalsIgnoreCase("s");
         Estudiante estudiante = new Estudiante(legajo, nombre, email);
@@ -85,7 +85,7 @@ public class ConsolaMenu {
 
     private void asignarResponsable() {
         int id = leerId();
-        String textoResponsable = leerTextoEnMayusculas("Responsable (BEDELIA/ALUMNADO/SECRETARIA): ");
+        String textoResponsable = leerTextoEnMayusculas("Responsable (" + Enums.opciones(Responsable.class) + "): ");
         servicio.obtener(id);
         Responsable responsable = requerir(Responsable.desde(textoResponsable), "responsable desconocido");
         servicio.asignarResponsable(id, responsable);

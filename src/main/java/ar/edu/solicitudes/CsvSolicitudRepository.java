@@ -63,12 +63,10 @@ public class CsvSolicitudRepository implements SolicitudRepository {
             if (tipo == null || prioridad == null || estado == null) {
                 throw new ArchivoDatosException(archivo + ", linea " + numeroDeLinea + ": tipo, prioridad o estado desconocido");
             }
-            return Solicitud.reconstruir(
-                    Integer.parseInt(campos.get(0)),
-                    new Estudiante(campos.get(1), campos.get(2), campos.get(3)),
-                    tipo, campos.get(5), prioridad, estado,
-                    Responsable.desde(campos.get(8)),
-                    campos.get(9).equals("1"));
+            Estudiante estudiante = new Estudiante(campos.get(1), campos.get(2), campos.get(3));
+            NuevaSolicitud datos = new NuevaSolicitud(estudiante, tipo, campos.get(5), campos.get(9).equals("1"));
+            return Solicitud.reconstruir(Integer.parseInt(campos.get(0)), datos, prioridad, estado,
+                    Responsable.desde(campos.get(8)));
         } catch (NumberFormatException | SolicitudException e) {
             throw new ArchivoDatosException(archivo + ", linea " + numeroDeLinea + ": " + e.getMessage(), e);
         }
