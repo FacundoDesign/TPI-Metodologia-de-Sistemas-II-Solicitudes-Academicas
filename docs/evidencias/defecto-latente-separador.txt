@@ -1,0 +1,16 @@
+# Defecto latente: un ';' dentro de un texto corrompia el registro al recargar el archivo
+# Pasos identicos en ambas versiones: (1) alta con descripcion 'Nota; urgente para beca', (2) reinicio del programa, (3) listado completo
+
+=== version inicial ===
+--- listado despues de reiniciar (campos: id | legajo | nombre | tipo | prioridad | estado | responsable) ---
+#1 | 12345 | Ana Perez | CERTIFICADO |  urgente para beca | BAJA | PENDIENTE
+Total: 1 solicitud(es)
+--- archivo solicitudes.csv ---
+1;12345;Ana Perez;ana@mail.com;CERTIFICADO;Nota; urgente para beca;BAJA;PENDIENTE;-;0
+
+=== version actual ===
+--- listado despues de reiniciar (campos: id | legajo | nombre | tipo | prioridad | estado | responsable) ---
+#1 | 12345 | Ana Perez | CERTIFICADO | BAJA | PENDIENTE | sin asignar
+Total: 1 solicitud(es)
+--- archivo solicitudes.csv ---
+1;12345;Ana Perez;ana@mail.com;CERTIFICADO;Nota\; urgente para beca;BAJA;PENDIENTE;-;0

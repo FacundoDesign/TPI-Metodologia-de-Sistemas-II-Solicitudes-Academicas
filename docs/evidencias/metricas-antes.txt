@@ -1,0 +1,10 @@
+$ python3 scripts/metricas.py src/main/java    # en el tag estado-inicial
+archivo                                LOC  metod  decis  liter  stat catchV
+GestorSolicitudes.java                 186     10     80     43     3      2
+Main.java                              111      1     24      6     0      0
+Solicitud.java                          13      0      0      0     0      0
+----------------------------------------------------------------------------
+archivos=3  LOC=310  metodos=11  decisiones=104
+comparaciones con literal=49  campos static mutables=3  catch vacios=2
+metodo mas largo: Main.main (107 lineas)   max parametros: GestorSolicitudes.registrar (6)
+LOC promedio por archivo=103.3  decisiones por archivo=34.7
