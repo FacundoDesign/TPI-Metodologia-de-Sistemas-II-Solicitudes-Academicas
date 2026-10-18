@@ -101,7 +101,7 @@ public class ComportamientoExternoTest {
     private String ejecutar(Path directorioTrabajo, Path entrada) throws IOException, InterruptedException {
         ProcesoAplicacion.Resultado r = ProcesoAplicacion.ejecutar(directorioTrabajo, entrada);
         assertEquals("El programa debe terminar con codigo 0", 0, r.codigo());
-        return r.salida();
+        return r.salida().replace("\r\n", "\n"); // independiente del sistema operativo
     }
 
     private Path recursosGolden() throws Exception {

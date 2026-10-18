@@ -9,12 +9,8 @@ import org.junit.Test;
 public class SolicitudTest {
 
     private Solicitud solicitud(TipoSolicitud tipo, Prioridad prioridad, Estado estado, Responsable responsable) {
-        Solicitud s = new Solicitud();
-        s.tipo = tipo;
-        s.prioridad = prioridad;
-        s.estado = estado;
-        s.responsable = responsable;
-        return s;
+        Estudiante estudiante = new Estudiante("12345", "Ana Perez", "ana@mail.com");
+        return Solicitud.reconstruir(1, estudiante, tipo, "descripcion", prioridad, estado, responsable, false);
     }
 
     @Test
