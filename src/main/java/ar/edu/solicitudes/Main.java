@@ -5,32 +5,48 @@ import java.util.*;
 // Refactoring 1 (Extract Method + Rename): main() ya no contiene la logica de cada opcion del menu.
 // Refactoring 2 (Replace Type Code with Enum): usa los enums del dominio en lugar de strings.
 // Refactoring 4 (Introduce Parameter Object): arma NuevaSolicitud y FiltroSolicitudes.
+// Refactoring 5 (Replace Error Code with Exception): un unico catch muestra todos los errores.
 public class Main {
 
     public static void main(String[] args) {
-        GestorSolicitudes.cargar();
+        try {
+            GestorSolicitudes.cargar();
+        } catch (ArchivoDatosException e) {
+            System.err.println("Error: " + e.getMessage());
+            System.exit(1);
+        }
         Scanner teclado = new Scanner(System.in);
         boolean salir = false;
         while (!salir) {
             mostrarMenu();
             String opcion = teclado.hasNextLine() ? teclado.nextLine().trim() : "0";
-            if (opcion.equals("1")) {
-                registrarSolicitud(teclado);
-            } else if (opcion.equals("2")) {
-                cambiarEstado(teclado);
-            } else if (opcion.equals("3")) {
-                asignarResponsable(teclado);
-            } else if (opcion.equals("4")) {
-                buscarSolicitudes(teclado);
-            } else if (opcion.equals("5")) {
-                GestorSolicitudes.imprimirReporte();
-            } else if (opcion.equals("0")) {
-                System.out.println("Hasta luego");
-                salir = true;
-            } else {
-                System.out.println("Opcion invalida");
+            try {
+                salir = ejecutarOpcion(opcion, teclado);
+            } catch (SolicitudException | ArchivoDatosException e) {
+                System.out.println("Error: " + e.getMessage());
             }
         }
+    }
+
+    // devuelve true si la persona eligio salir
+    private static boolean ejecutarOpcion(String opcion, Scanner teclado) {
+        if (opcion.equals("1")) {
+            registrarSolicitud(teclado);
+        } else if (opcion.equals("2")) {
+            cambiarEstado(teclado);
+        } else if (opcion.equals("3")) {
+            asignarResponsable(teclado);
+        } else if (opcion.equals("4")) {
+            buscarSolicitudes(teclado);
+        } else if (opcion.equals("5")) {
+            GestorSolicitudes.imprimirReporte();
+        } else if (opcion.equals("0")) {
+            System.out.println("Hasta luego");
+            return true;
+        } else {
+            System.out.println("Opcion invalida");
+        }
+        return false;
     }
 
     private static void mostrarMenu() {
@@ -52,41 +68,23 @@ public class Main {
         String descripcion = leerTexto(teclado, "Descripcion: ");
         String urgente = leerTexto(teclado, "Urgente (s/n): ");
         NuevaSolicitud datos = new NuevaSolicitud(new Estudiante(legajo, nombre, email), tipo, descripcion, urgente.equalsIgnoreCase("s"));
-        int resultado = GestorSolicitudes.registrar(datos);
-        if (resultado == -1) System.out.println("Error: legajo invalido (se esperan 5 digitos)");
-        else if (resultado == -2) System.out.println("Error: el nombre no puede estar vacio");
-        else if (resultado == -3) System.out.println("Error: email invalido");
-        else if (resultado == -4) System.out.println("Error: tipo de solicitud desconocido");
-        else {
-            Solicitud nueva = GestorSolicitudes.buscarPorId(resultado);
-            System.out.println("Solicitud registrada con ID " + resultado + " (prioridad " + nueva.prioridad
-                    + ", plazo " + nueva.calcularPlazo() + " dias)");
-        }
+        Solicitud nueva = GestorSolicitudes.registrar(datos);
+        System.out.println("Solicitud registrada con ID " + nueva.id + " (prioridad " + nueva.prioridad
+                + ", plazo " + nueva.calcularPlazo() + " dias)");
     }
 
     private static void cambiarEstado(Scanner teclado) {
-        Integer id = leerId(teclado);
-        if (id == null) return;
+        int id = leerId(teclado);
         String nuevoEstado = leerTextoEnMayusculas(teclado, "Nuevo estado: ");
-        int resultado = GestorSolicitudes.cambiarEstado(id, nuevoEstado);
-        if (resultado == 0) System.out.println("Estado actualizado: #" + id + " -> " + nuevoEstado);
-        else if (resultado == -1) System.out.println("Error: no existe la solicitud " + id);
-        else if (resultado == -2) System.out.println("Error: estado desconocido");
-        else if (resultado == -3) {
-            Solicitud s = GestorSolicitudes.buscarPorId(id);
-            System.out.println("Error: transicion invalida " + s.estado + " -> " + nuevoEstado);
-        } else if (resultado == -4) System.out.println("Error: debe asignar responsable antes de pasar a EN_PROCESO");
+        GestorSolicitudes.cambiarEstado(id, nuevoEstado);
+        System.out.println("Estado actualizado: #" + id + " -> " + nuevoEstado);
     }
 
     private static void asignarResponsable(Scanner teclado) {
-        Integer id = leerId(teclado);
-        if (id == null) return;
+        int id = leerId(teclado);
         String responsable = leerTextoEnMayusculas(teclado, "Responsable (BEDELIA/ALUMNADO/SECRETARIA): ");
-        int resultado = GestorSolicitudes.asignarResponsable(id, responsable);
-        if (resultado == 0) System.out.println("Responsable asignado: #" + id + " -> " + responsable);
-        else if (resultado == -1) System.out.println("Error: no existe la solicitud " + id);
-        else if (resultado == -2) System.out.println("Error: responsable desconocido");
-        else if (resultado == -3) System.out.println("Error: la solicitud esta cerrada");
+        GestorSolicitudes.asignarResponsable(id, responsable);
+        System.out.println("Responsable asignado: #" + id + " -> " + responsable);
     }
 
     private static void buscarSolicitudes(Scanner teclado) {
@@ -96,12 +94,12 @@ public class Main {
         String responsable = leerTextoEnMayusculas(teclado, "Filtro responsable (vacio = todos): ");
         String legajo = leerTexto(teclado, "Filtro legajo (vacio = todos): ");
         List<Solicitud> resultado = GestorSolicitudes.buscar(new FiltroSolicitudes(estado, tipo, prioridad, responsable, legajo));
-        if (resultado.size() == 0) {
+        if (resultado.isEmpty()) {
             System.out.println("Sin resultados");
             return;
         }
-        for (int i = 0; i < resultado.size(); i++) {
-            System.out.println(formatearFila(resultado.get(i)));
+        for (Solicitud s : resultado) {
+            System.out.println(formatearFila(s));
         }
         System.out.println("Total: " + resultado.size() + " solicitud(es)");
     }
@@ -123,14 +121,12 @@ public class Main {
         return leerTexto(teclado, consigna).toUpperCase();
     }
 
-    // devuelve null (y avisa) si lo ingresado no es un numero
-    private static Integer leerId(Scanner teclado) {
+    private static int leerId(Scanner teclado) {
         String texto = leerTexto(teclado, "ID: ");
         try {
             return Integer.parseInt(texto);
         } catch (NumberFormatException e) {
-            System.out.println("Error: ID invalido");
-            return null;
+            throw new SolicitudException("ID invalido");
         }
     }
 }
