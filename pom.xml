@@ -30,6 +30,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
+        <configuration>
+          <!-- ComportamientoExternoTest lanza la aplicacion como proceso externo y necesita el classpath real -->
+          <useManifestOnlyJar>false</useManifestOnlyJar>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
