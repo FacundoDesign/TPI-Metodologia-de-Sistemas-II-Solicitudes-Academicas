@@ -11,6 +11,8 @@ Definiciones (heuristicas, validas para el estilo de formato del proyecto: 4 esp
   static mutable campos estaticos no final
   catch vacios   bloques catch sin ninguna sentencia
   params max     mayor cantidad de parametros en un metodo
+  CC metodo      complejidad ciclomatica de McCabe aproximada por metodo = 1 + (if|for|while|case|catch|&&|||||?) dentro del metodo
+                 (umbral habitual: > 10 = metodo a revisar; SonarQube usa la misma idea)
 """
 import re
 import sys
@@ -22,6 +24,7 @@ no_metodo = {"if", "for", "while", "switch", "catch", "else", "return", "new"}
 
 tot = dict(archivos=0, loc=0, metodos=0, decisiones=0, literales=0, static_mut=0, catch_vacios=0)
 mas_largo = (0, "")
+cc_metodos = []
 params_max = (0, "")
 detalle = []
 for f in sorted(raiz.rglob("*.java")):
@@ -43,6 +46,8 @@ for f in sorted(raiz.rglob("*.java")):
                 j += 1
             largo = j - i + 1
             metodos += 1
+            cuerpo = "\n".join(l for l in lineas[i:j + 1] if not l.strip().startswith(("//", "*", "/*")))
+            cc_metodos.append((1 + len(re.findall(r"\b(?:if|for|while|case|catch)\b|&&|\|\||\?(?!\w*>)", cuerpo)), f"{f.stem}.{m.group(1)}"))
             if largo > mas_largo[0]:
                 mas_largo = (largo, f"{f.stem}.{m.group(1)}")
             p = m.group(2).strip()
@@ -70,3 +75,8 @@ print(f"comparaciones con literal={tot['literales']}  campos static mutables={to
 print(f"metodo mas largo: {mas_largo[1]} ({mas_largo[0]} lineas)   max parametros: {params_max[1]} ({params_max[0]})")
 if tot["archivos"]:
     print(f"LOC promedio por archivo={tot['loc']/tot['archivos']:.1f}  decisiones por archivo={tot['decisiones']/tot['archivos']:.1f}")
+cc_metodos.sort(reverse=True)
+if cc_metodos:
+    print(f"complejidad ciclomatica por metodo (McCabe aprox.): maxima={cc_metodos[0][0]} en {cc_metodos[0][1]}   "
+          f"metodos con CC>10: {sum(1 for c, _ in cc_metodos if c > 10)} de {len(cc_metodos)}")
+    print("top 3 CC: " + ", ".join(f"{n}={c}" for c, n in cc_metodos[:3]))
