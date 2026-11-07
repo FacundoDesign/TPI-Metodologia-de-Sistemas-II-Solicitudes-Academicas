@@ -1,0 +1,32 @@
+=== ANTES (tag estado-inicial): lugares que mencionan los tipos y deberian editarse ===
+GestorSolicitudes.java:64:        if (!(tipo.equals("CERTIFICADO") || tipo.equals("EQUIVALENCIA") || tipo.equals("REVISION_NOTA") || tipo.equals("BAJA_MATERIA"))) return -4;
+GestorSolicitudes.java:67:        if (tipo.equals("REVISION_NOTA")) p = "ALTA";
+GestorSolicitudes.java:68:        else if (tipo.equals("EQUIVALENCIA")) p = "MEDIA";
+GestorSolicitudes.java:69:        else if (tipo.equals("BAJA_MATERIA")) p = "MEDIA";
+GestorSolicitudes.java:148:        if (s.tipo.equals("EQUIVALENCIA")) d = d + 5;
+Main.java:28:                System.out.print("Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA): ");
+(4 lugares en 2 archivos: validacion del tipo, prioridad base, plazo y texto del prompt)
+
+=== DESPUES: se agrega una constante al enum en una copia temporal ===
+diff -ru /tmp/tmp.5zdkzI3gP9/orig/src/main/java/ar/edu/solicitudes/TipoSolicitud.java /tmp/tmp.5zdkzI3gP9/mod/src/main/java/ar/edu/solicitudes/TipoSolicitud.java
+--- /tmp/tmp.5zdkzI3gP9/orig/src/main/java/ar/edu/solicitudes/TipoSolicitud.java	2026-11-07 21:47:22.768543754 +0000
++++ /tmp/tmp.5zdkzI3gP9/mod/src/main/java/ar/edu/solicitudes/TipoSolicitud.java	2026-11-07 21:47:22.784318674 +0000
+@@ -4,7 +4,8 @@
+     CERTIFICADO(Prioridad.BAJA, 0),
+     EQUIVALENCIA(Prioridad.MEDIA, 5),
+     REVISION_NOTA(Prioridad.ALTA, 0),
+-    BAJA_MATERIA(Prioridad.MEDIA, 0);
++    BAJA_MATERIA(Prioridad.MEDIA, 0),
++    CAMBIO_COMISION(Prioridad.MEDIA, 2);
+ 
+     private final Prioridad prioridadBase;
+     private final int plazoExtraDias;
+
+=== Sesion real: alta de un CAMBIO_COMISION urgente + reporte ===
+Opcion: Legajo: Nombre: Email: Tipo (CERTIFICADO/EQUIVALENCIA/REVISION_NOTA/BAJA_MATERIA/CAMBIO_COMISION): Descripcion: Urgente (s/n): Solicitud registrada con ID 1 (prioridad ALTA, plazo 5 dias)
+Opcion: Filtro estado (vacio = todos): Filtro tipo (vacio = todos): Filtro prioridad (vacio = todos): Filtro responsable (vacio = todos): Filtro legajo (vacio = todos): #1 | 12345 | Ana Perez | CAMBIO_COMISION | ALTA | PENDIENTE | sin asignar
+Total: 1 solicitud(es)
+Total de solicitudes: 1
+Plazo promedio de respuesta: 5.0 dias
+
+Resultado: el menu, el alta (prioridad ALTA por urgente, plazo 3+2=5), el listado y el reporte aceptan el nuevo tipo sin tocar ninguna otra clase.
