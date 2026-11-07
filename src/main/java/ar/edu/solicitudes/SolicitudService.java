@@ -19,22 +19,33 @@ public class SolicitudService {
         this.proximoId = calcularProximoId();
     }
 
+    // Los tres casos de uso que modifican datos son transaccionales respecto de la persistencia: si guardar() falla,
+    // la memoria vuelve al estado previo y la excepcion se propaga (cierra la observacion R-4 del code review).
     public Solicitud registrar(NuevaSolicitud datos) {
         Solicitud nueva = Solicitud.nueva(proximoId, datos);
-        proximoId++;
         solicitudes.add(nueva);
-        guardar();
+        try {
+            guardar();
+        } catch (ArchivoDatosException e) {
+            solicitudes.remove(nueva);
+            throw e;
+        }
+        proximoId++;
         return nueva;
     }
 
     public void cambiarEstado(int id, Estado nuevoEstado) {
-        obtener(id).pasarA(nuevoEstado);
-        guardar();
+        Solicitud solicitud = obtener(id);
+        Seguimiento anterior = solicitud.seguimiento();
+        solicitud.pasarA(nuevoEstado);
+        guardarORestaurar(solicitud, anterior);
     }
 
     public void asignarResponsable(int id, Responsable responsable) {
-        obtener(id).asignarA(responsable);
-        guardar();
+        Solicitud solicitud = obtener(id);
+        Seguimiento anterior = solicitud.seguimiento();
+        solicitud.asignarA(responsable);
+        guardarORestaurar(solicitud, anterior);
     }
 
     // lanza SolicitudException si no existe
@@ -63,6 +74,15 @@ public class SolicitudService {
             maximo = Math.max(maximo, s.id());
         }
         return maximo + 1;
+    }
+
+    private void guardarORestaurar(Solicitud solicitud, Seguimiento anterior) {
+        try {
+            guardar();
+        } catch (ArchivoDatosException e) {
+            solicitud.restaurar(anterior);
+            throw e;
+        }
     }
 
     private void guardar() {

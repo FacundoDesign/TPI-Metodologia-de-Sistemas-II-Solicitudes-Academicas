@@ -1,0 +1,8 @@
+# TDD fase ROJA: las pruebas de R-4 fallan sobre el servicio previo a la correccion (demuestra que el defecto era real)
+1) siFallaElGuardadoUnaSolicitudNuevaNoQuedaEnMemoria(ar.edu.solicitudes.SolicitudServiceConsistenciaTest)
+2) trasUnFalloDeGuardadoElProximoIdNoSeSalta(ar.edu.solicitudes.SolicitudServiceConsistenciaTest)
+java.lang.AssertionError: expected:<1> but was:<2>
+3) siFallaElGuardadoLaAsignacionDeResponsableSeRevierte(ar.edu.solicitudes.SolicitudServiceConsistenciaTest)
+4) siFallaElGuardadoElCambioDeEstadoSeRevierte(ar.edu.solicitudes.SolicitudServiceConsistenciaTest)
+java.lang.AssertionError: expected:<PENDIENTE> but was:<EN_PROCESO>
+Tests run: 92,  Failures: 4
