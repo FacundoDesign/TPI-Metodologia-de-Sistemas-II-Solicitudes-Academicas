@@ -78,6 +78,16 @@ public class Solicitud {
         return estado.esFinal();
     }
 
+    // Foto del estado mutable (estado + responsable): permite al servicio deshacer un cambio si no se pudo persistir.
+    Seguimiento seguimiento() {
+        return new Seguimiento(estado, responsable);
+    }
+
+    void restaurar(Seguimiento anterior) {
+        this.estado = anterior.estado();
+        this.responsable = anterior.responsable();
+    }
+
     public boolean tieneResponsable() {
         return responsable != null;
     }
