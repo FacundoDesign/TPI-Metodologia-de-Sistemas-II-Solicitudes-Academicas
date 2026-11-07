@@ -10,6 +10,7 @@ PrioridadTest                                 2
 ReporteSolicitudesTest                        3
 RepositorioEnMemoriaContratoTest              0
 SolicitudReglasTest                           6
+SolicitudServiceConsistenciaTest              7
 SolicitudServiceTest                          13
 SolicitudTest                                 5
 TipoSolicitudTest                             3

@@ -12,13 +12,16 @@ NuevaSolicitud.java                      6      0      1      0     0      0
 Prioridad.java                          20      3      2      0     0      0
 ReporteSolicitudes.java                 27      2      5      0     0      0
 Responsable.java                         7      1      0      0     0      0
-Solicitud.java                          74     15      4      0     0      0
+Seguimiento.java                         3      0      0      0     0      0
+Solicitud.java                          81     18      4      0     0      0
 SolicitudException.java                  6      1      0      0     0      0
 SolicitudRepository.java                 6      0      0      0     0      0
-SolicitudService.java                   55      9      5      0     0      0
+SolicitudService.java                   72     10      5      0     0      0
 TipoSolicitud.java                      22      3      1      0     0      0
 ----------------------------------------------------------------------------
-archivos=17  LOC=558  metodos=70  decisiones=70
+archivos=18  LOC=585  metodos=74  decisiones=70
 comparaciones con literal=1  campos static mutables=0  catch vacios=0
-metodo mas largo: CsvSolicitudRepository.parsearLinea (21 lineas)   max parametros: Solicitud.Solicitud (5)
-LOC promedio por archivo=32.8  decisiones por archivo=4.1
+metodo mas largo: CsvSolicitudRepository.parsearLinea (21 lineas)   max parametros: Solicitud.Solicitud (4)
+LOC promedio por archivo=32.5  decisiones por archivo=3.9
+complejidad ciclomatica por metodo (McCabe aprox.): maxima=7 en ConsolaMenu.ejecutarOpcion   metodos con CC>10: 0 de 74
+top 3 CC: ConsolaMenu.ejecutarOpcion=7, FiltroSolicitudes.acepta=6, Estado.puedePasarA=6
