@@ -1,0 +1,19 @@
+Suite base: VERDE
+
+id   resultado  archivo                      mutacion
+M01  MATADO     Solicitud.java               el plazo resta el extra del tipo en vez de sumarlo
+M02  MATADO     Prioridad.java               la urgencia sube dos niveles
+M03  MATADO     Estado.java                  PENDIENTE puede saltar directo a RESUELTA
+M04  MATADO     Estado.java                  RECHAZADA deja de ser estado final
+M05  MATADO     Solicitud.java               EN_PROCESO exige lo contrario: que SI haya responsable
+M06  MATADO     Solicitud.java               se puede asignar en cerradas y no en abiertas
+M07  MATADO     Estudiante.java              el legajo exige 6 digitos
+M08  MATADO     Estudiante.java              se acepta un email que empieza con @
+M09  MATADO     ReporteSolicitudes.java      el promedio se redondea a 2 decimales
+M10  MATADO     TipoSolicitud.java           plazo extra de EQUIVALENCIA incorrecto
+M11  MATADO     SolicitudService.java        obtener(id) devuelve cualquier otra solicitud
+M12  MATADO     CsvSolicitudRepository.java  no se escapa el ';' (reaparece el defecto latente)
+M13  MATADO     SolicitudService.java        no se revierte el alta si falla el guardado (R-4)
+M14  MATADO     SolicitudService.java        no se revierte el cambio si falla el guardado (R-4)
+
+Mutantes matados: 14 de 14  (puntaje de mutacion 100 %)
