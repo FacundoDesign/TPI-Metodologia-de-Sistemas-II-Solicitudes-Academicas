@@ -13,27 +13,27 @@ public class Solicitud {
     private Estado estado;
     private Responsable responsable;
 
-    private Solicitud(int id, NuevaSolicitud datos, Prioridad prioridad, Estado estado, Responsable responsable) {
+    private Solicitud(int id, NuevaSolicitud datos, Prioridad prioridad, Seguimiento seguimiento) {
         this.id = id;
         this.estudiante = datos.estudiante();
         this.tipo = datos.tipo();
         this.descripcion = datos.descripcion();
         this.urgente = datos.urgente();
         this.prioridad = prioridad;
-        this.estado = estado;
-        this.responsable = responsable;
+        this.estado = seguimiento.estado();
+        this.responsable = seguimiento.responsable();
     }
 
     // Alta de una solicitud nueva: nace PENDIENTE, sin responsable y con la prioridad que corresponde al tipo.
     public static Solicitud nueva(int id, NuevaSolicitud datos) {
-        return new Solicitud(id, datos, datos.tipo().prioridadInicial(datos.urgente()), Estado.PENDIENTE, null);
+        return new Solicitud(id, datos, datos.tipo().prioridadInicial(datos.urgente()),
+                new Seguimiento(Estado.PENDIENTE, null));
     }
 
     // Reconstruccion de una solicitud ya existente (la usa el repositorio al leer los datos guardados).
-    // Reutiliza NuevaSolicitud como Parameter Object: 5 parametros en lugar de 8.
-    public static Solicitud reconstruir(int id, NuevaSolicitud datos, Prioridad prioridad, Estado estado,
-                                        Responsable responsable) {
-        return new Solicitud(id, datos, prioridad, estado, responsable);
+    // Reutiliza NuevaSolicitud y Seguimiento como Parameter Objects: 4 parametros en lugar de 8.
+    public static Solicitud reconstruir(int id, NuevaSolicitud datos, Prioridad prioridad, Seguimiento seguimiento) {
+        return new Solicitud(id, datos, prioridad, seguimiento);
     }
 
     public int id() {

@@ -34,7 +34,7 @@ public class CsvSolicitudRepositoryTest extends ContratoSolicitudRepository {
     public void elFormatoDeLosDatosNormalesNoCambioRespectoDeLaVersionInicial() throws Exception {
         SolicitudRepository repo = crear();
 
-        repo.guardarTodas(List.of(DatosDePrueba.solicitud(1, TipoSolicitud.EQUIVALENCIA, Prioridad.MEDIA, Estado.EN_PROCESO, Responsable.BEDELIA)));
+        repo.guardarTodas(List.of(DatosDePrueba.solicitud(1, TipoSolicitud.EQUIVALENCIA, Prioridad.MEDIA, new Seguimiento(Estado.EN_PROCESO, Responsable.BEDELIA))));
 
         assertEquals("1;12345;Ana Perez;ana@mail.com;EQUIVALENCIA;descripcion de prueba;MEDIA;EN_PROCESO;BEDELIA;0"
                 + System.lineSeparator(), Files.readString(archivo(), StandardCharsets.UTF_8));
@@ -46,7 +46,7 @@ public class CsvSolicitudRepositoryTest extends ContratoSolicitudRepository {
         Estudiante estudiante = new Estudiante("12345", "Perez; Ana", "ana@mail.com");
         Solicitud conSeparador = Solicitud.reconstruir(1,
                 new NuevaSolicitud(estudiante, TipoSolicitud.CERTIFICADO, "Nota; urgente para beca", false),
-                Prioridad.BAJA, Estado.PENDIENTE, null);
+                Prioridad.BAJA, new Seguimiento(Estado.PENDIENTE, null));
 
         repo.guardarTodas(List.of(conSeparador));
         List<Solicitud> leidas = repo.cargarTodas();
@@ -61,7 +61,7 @@ public class CsvSolicitudRepositoryTest extends ContratoSolicitudRepository {
         String descripcion = "ruta C:" + BARRA + "tmp" + BARRA + ";fin" + BARRA;
         Solicitud conBarra = Solicitud.reconstruir(1,
                 new NuevaSolicitud(DatosDePrueba.ana(), TipoSolicitud.CERTIFICADO, descripcion, false),
-                Prioridad.BAJA, Estado.PENDIENTE, null);
+                Prioridad.BAJA, new Seguimiento(Estado.PENDIENTE, null));
 
         repo.guardarTodas(List.of(conBarra));
 

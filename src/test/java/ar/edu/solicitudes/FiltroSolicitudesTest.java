@@ -10,7 +10,7 @@ public class FiltroSolicitudesTest {
     private Solicitud solicitudDeEjemplo() {
         Estudiante estudiante = new Estudiante("12345", "Ana Perez", "ana@mail.com");
         return Solicitud.reconstruir(1, new NuevaSolicitud(estudiante, TipoSolicitud.CERTIFICADO, "descripcion", false),
-                Prioridad.BAJA, Estado.PENDIENTE, null);
+                Prioridad.BAJA, new Seguimiento(Estado.PENDIENTE, null));
     }
 
     @Test
