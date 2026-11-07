@@ -10,7 +10,7 @@ public class SolicitudTest {
 
     private Solicitud solicitud(TipoSolicitud tipo, Prioridad prioridad, Estado estado, Responsable responsable) {
         Estudiante estudiante = new Estudiante("12345", "Ana Perez", "ana@mail.com");
-        return Solicitud.reconstruir(1, new NuevaSolicitud(estudiante, tipo, "descripcion", false), prioridad, estado, responsable);
+        return Solicitud.reconstruir(1, new NuevaSolicitud(estudiante, tipo, "descripcion", false), prioridad, new Seguimiento(estado, responsable));
     }
 
     @Test

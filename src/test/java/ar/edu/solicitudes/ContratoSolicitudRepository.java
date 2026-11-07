@@ -24,10 +24,10 @@ abstract class ContratoSolicitudRepository {
     @Test
     public void loGuardadoSeRecuperaIgual() throws Exception {
         SolicitudRepository repo = crear();
-        Solicitud abierta = DatosDePrueba.solicitud(1, TipoSolicitud.EQUIVALENCIA, Prioridad.MEDIA, Estado.EN_PROCESO, Responsable.BEDELIA);
+        Solicitud abierta = DatosDePrueba.solicitud(1, TipoSolicitud.EQUIVALENCIA, Prioridad.MEDIA, new Seguimiento(Estado.EN_PROCESO, Responsable.BEDELIA));
         Estudiante luis = new Estudiante("23456", "Luis Gomez", "luis@mail.com");
         Solicitud sinResponsable = Solicitud.reconstruir(2, new NuevaSolicitud(luis, TipoSolicitud.CERTIFICADO, "otra descripcion", true),
-                Prioridad.BAJA, Estado.PENDIENTE, null);
+                Prioridad.BAJA, new Seguimiento(Estado.PENDIENTE, null));
 
         repo.guardarTodas(List.of(abierta, sinResponsable));
         List<Solicitud> leidas = repo.cargarTodas();
@@ -40,10 +40,10 @@ abstract class ContratoSolicitudRepository {
     @Test
     public void guardarReemplazaElContenidoAnterior() throws Exception {
         SolicitudRepository repo = crear();
-        repo.guardarTodas(List.of(DatosDePrueba.solicitud(1, TipoSolicitud.CERTIFICADO, Prioridad.BAJA, Estado.PENDIENTE, null),
-                DatosDePrueba.solicitud(2, TipoSolicitud.CERTIFICADO, Prioridad.BAJA, Estado.PENDIENTE, null)));
+        repo.guardarTodas(List.of(DatosDePrueba.solicitud(1, TipoSolicitud.CERTIFICADO, Prioridad.BAJA, new Seguimiento(Estado.PENDIENTE, null)),
+                DatosDePrueba.solicitud(2, TipoSolicitud.CERTIFICADO, Prioridad.BAJA, new Seguimiento(Estado.PENDIENTE, null))));
 
-        repo.guardarTodas(List.of(DatosDePrueba.solicitud(3, TipoSolicitud.CERTIFICADO, Prioridad.BAJA, Estado.PENDIENTE, null)));
+        repo.guardarTodas(List.of(DatosDePrueba.solicitud(3, TipoSolicitud.CERTIFICADO, Prioridad.BAJA, new Seguimiento(Estado.PENDIENTE, null))));
 
         assertEquals(1, repo.cargarTodas().size());
         assertEquals(3, repo.cargarTodas().get(0).id());

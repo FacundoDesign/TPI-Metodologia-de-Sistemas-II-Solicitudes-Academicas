@@ -15,6 +15,10 @@ final class DatosDePrueba {
     }
 
     static Solicitud solicitud(int id, TipoSolicitud tipo, Prioridad prioridad, Estado estado, Responsable responsable) {
-        return Solicitud.reconstruir(id, new NuevaSolicitud(ana(), tipo, "descripcion de prueba", false), prioridad, estado, responsable);
+        return solicitud(id, tipo, prioridad, new Seguimiento(estado, responsable));
+    }
+
+    static Solicitud solicitud(int id, TipoSolicitud tipo, Prioridad prioridad, Seguimiento seguimiento) {
+        return Solicitud.reconstruir(id, new NuevaSolicitud(ana(), tipo, "descripcion de prueba", false), prioridad, seguimiento);
     }
 }
