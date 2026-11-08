@@ -30,10 +30,12 @@ Requisito: **JDK 17 o superior**.
 ```bash
 ./scripts/build.sh                                   # compila (no requiere Maven)
 cd /ruta/de/trabajo && java -cp /ruta/al/repo/build/main ar.edu.solicitudes.Main
-./scripts/test.sh                                    # 85 pruebas -> OK (85 tests)
+./scripts/test.sh                                    # 92 pruebas -> OK (92 tests)
 mvn -B verify                                        # alternativa con Maven + cobertura JaCoCo
 ./scripts/comparar-versiones.sh                      # evidencia antes/después contra el tag estado-inicial
-python3 scripts/metricas.py                          # métricas de calidad interna
+python3 scripts/metricas.py                          # métricas (incluye complejidad ciclomatica por metodo)
+./scripts/experimento-ocp.sh                         # experimento OCP: agregar un tipo de solicitud
+python3 scripts/mutacion.py                          # 14 mutantes: las pruebas deben matarlos
 ```
 El programa guarda `solicitudes.csv` en el directorio desde el que se ejecuta.
 
@@ -51,11 +53,12 @@ Errores: SolicitudException · ArchivoDatosException
 | `estado-inicial` | Sistema base con deuda técnica (God Class, strings mágicos, códigos de error…) | 1 |
 | `etapa-diagnostico` | Diagnóstico: calidad interna/externa, 13 code smells priorizados | 2, 3 |
 | `etapa-pruebas-base` | Red de seguridad (*golden master*) escrita **antes** de refactorizar | 6 |
-| `etapa-refactoring` | Los 6 refactorings aplicados (un commit cada uno) | 4, 5 |
-| `etapa-pruebas` | Pruebas unitarias, de contrato y de consola (83 pruebas; 85 tras el code review) | 6 |
+| `etapa-refactoring` | Los 7 refactorings aplicados (un commit cada uno) | 4, 5 |
+| `etapa-pruebas` | Pruebas unitarias, de contrato y de consola (83 pruebas; 92 tras las dos rondas de code review) | 6 |
 | `etapa-code-review` | Correcciones surgidas de la revisión técnica | 7 |
 | `etapa-docs` | Documentación, CI y plantillas de GitHub completas | 7, 8 |
-| `estado-refactorizado` (alias `estadorefactorizado`) | Estado final del código | — |
+| `estado-refactorizado` (alias `estadorefactorizado`, nombre usado en el PDF de la consigna) | Estado final del código | — |
+| `v0.1.0` / `v1.0.0` | Versionado semántico: inicial / refactorizada | — |
 
 ```bash
 git checkout estado-inicial          # ver la versión inicial
@@ -68,11 +71,12 @@ git log --oneline --decorate
 |---|---|
 | [01-diagnostico.md](docs/01-diagnostico.md) | Calidad externa vs. interna, métricas y 13 code smells con evidencia, impacto, riesgo y prioridad |
 | [02-solid-clean-code.md](docs/02-solid-clean-code.md) | Aplicación de SRP/OCP/LSP/ISP/DIP y de Clean Code, antes y después |
-| [03-refactorings.md](docs/03-refactorings.md) | 6 refactorings con fragmentos antes/después, commits y resultados en números |
+| [03-refactorings.md](docs/03-refactorings.md) | 7 refactorings con fragmentos antes/después, commits y resultados en números |
 | [04-pruebas-y-verificacion.md](docs/04-pruebas-y-verificacion.md) | Estrategia de pruebas, casos de prueba y evidencia antes/después |
 | [05-code-review.md](docs/05-code-review.md) | Checklist técnico, observaciones, feedback y criterios de aceptación |
 | [06-decisiones-tecnicas.md](docs/06-decisiones-tecnicas.md) | Decisiones de diseño (ADR) |
 | [07-uso-de-ia.md](docs/07-uso-de-ia.md) | Declaración de uso de IA y registro de prompts |
+| [08-trazabilidad.md](docs/08-trazabilidad.md) | Matriz smell → principio → refactoring → commit → pruebas → evidencia y cumplimiento de la consigna |
 | [evidencias/](docs/evidencias) | Salidas reproducibles: métricas, pruebas, comparación antes/después, defecto latente |
 
 ## Flujo de trabajo
