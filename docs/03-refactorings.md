@@ -96,7 +96,7 @@ Solicitud.reconstruir(int id, NuevaSolicitud datos, Prioridad prioridad, Estado 
 // DESPUES
 Solicitud.reconstruir(int id, NuevaSolicitud datos, Prioridad prioridad, Seguimiento seguimiento)   // record Seguimiento(Estado, Responsable)
 ```
-Verificación: 85 pruebas y comparación 6/6 sin cambios; máximo de parámetros del proyecto = 4.
+Verificación: 92 pruebas y comparación 6/6 sin cambios; máximo de parámetros del proyecto = 4.
 
 ## Cambios deliberados que NO son refactorings (se registran aparte)
 Regla (ADR-9): un refactoring no cambia el comportamiento externo. Solo se hicieron cambios de comportamiento cuando el comportamiento previo era **un defecto que corrompía o perdía datos, o que ocultaba errores**; nunca para "mejorar" una regla de negocio discutible.

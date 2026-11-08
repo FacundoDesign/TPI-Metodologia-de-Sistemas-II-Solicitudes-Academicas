@@ -84,8 +84,8 @@ por refactoring con la suite en verde; decisiones deliberadas documentadas (ADR)
 ### Ejemplo de comentario en el Pull Request (estructura profesional)
 > **Lo bueno:** extraer `SolicitudRepository` dejó los casos de uso testeables sin tocar el disco; muy buena la prueba de contrato.
 > **A mejorar (R-1):** `Solicitud.reconstruir` toma 8 parámetros y varios son del mismo tipo; es fácil intercambiarlos sin que el compilador avise.
-> **Propuesta:** reutilizar `NuevaSolicitud`, que ya agrupa esos datos. Quedaría con 5 y sin tocar a los llamadores externos.
-> **Criterio de aceptación:** las 85 pruebas (92 tras la segunda ronda) en verde y la comparación con `estado-inicial` sin diferencias.
+> **Propuesta:** reutilizar `NuevaSolicitud`, que ya agrupa esos datos. Quedaría con 5 en ese momento (luego 4 con `Seguimiento`, R-10) y sin tocar a los llamadores externos.
+> **Criterio de aceptación:** las pruebas (85 entonces, 92 tras la segunda ronda) en verde y la comparación con `estado-inicial` sin diferencias.
 
 ## 3. Resultado
 Hallazgos: **15** · corregidos: **10** (R-1, R-2, R-3, R-4, R-10 a R-15) · aceptados con justificación: **4** (R-5, R-6, R-8, R-9) · pendientes: **1** (R-7, *linter* automático).
