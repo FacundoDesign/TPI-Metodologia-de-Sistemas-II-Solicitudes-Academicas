@@ -1,7 +1,7 @@
 # Code review profesional
 
 > El code review **no es una auditoría ni una crítica personal**: es una práctica colaborativa para mejorar el software (Unidad 3).
-> Alcance revisado: el repositorio en el tag `etapa-pruebas` (commit `90d3bf5`), antes de aplicar las correcciones.
+> Alcance revisado: el repositorio en el tag `etapa-pruebas` (commit `3e5dc7d`), antes de aplicar las correcciones.
 > Revisor/a: **[COMPLETAR: integrante revisor/a]** · Autor/a del cambio: **[COMPLETAR: integrante autor/a]** · Fecha: **[COMPLETAR]**
 > (Idealmente, cada refactoring se integra mediante un *Pull Request* revisado por otra persona del equipo; los comentarios quedan en GitHub como evidencia.)
 
@@ -56,10 +56,10 @@ Cada observación sigue la estructura *hecho objetivo → impacto → propuesta*
 
 | ID | Sev. | Ubicación | Observación (hecho) | Impacto | Propuesta | Estado |
 |---|---|---|---|---|---|---|
-| R-1 | Media | `Solicitud.reconstruir` | Recibe 8 parámetros; varios son del mismo concepto (`NuevaSolicitud` ya los agrupa). | Firma frágil: dos `String` consecutivos se pueden intercambiar sin error de compilación. | Reutilizar `NuevaSolicitud` como *Parameter Object*: 8 → 5. | ✔ Corregido en `d737d7d` |
-| R-2 | Baja | `FiltroSolicitudes` | Un criterio `null` produce `NullPointerException` en `coincide`. | Falla al combinar filtros desde código nuevo (no desde el menú, que siempre pasa texto). | Normalizar `null` a "todos" en el constructor compacto + prueba. | ✔ Corregido en `d737d7d` |
-| R-3 | Baja | `ConsolaMenu` | Las opciones de tipo/responsable del *prompt* estaban escritas a mano. | Al agregar un tipo hay que acordarse de editar el texto (viola OCP). | `Enums.opciones(Class)` genera la lista; agregar un tipo es 1 línea. | ✔ Corregido en `d737d7d` |
-| R-4 | **Alta** | `SolicitudService` | Si `guardar()` falla *después* de modificar la solicitud en memoria, memoria y archivo quedan distintos hasta el próximo guardado exitoso. | Posible desajuste visible en la misma sesión tras un error de disco. | Guardar antes de confirmar el cambio (*unit of work*) o revertir el cambio ante el fallo. | ✔ Corregido en `39ea3e0` (segunda ronda): el servicio revierte la memoria; 4 pruebas con stub, en rojo antes de corregir |
+| R-1 | Media | `Solicitud.reconstruir` | Recibe 8 parámetros; varios son del mismo concepto (`NuevaSolicitud` ya los agrupa). | Firma frágil: dos `String` consecutivos se pueden intercambiar sin error de compilación. | Reutilizar `NuevaSolicitud` como *Parameter Object*: 8 → 5. | ✔ Corregido en `1120228` |
+| R-2 | Baja | `FiltroSolicitudes` | Un criterio `null` produce `NullPointerException` en `coincide`. | Falla al combinar filtros desde código nuevo (no desde el menú, que siempre pasa texto). | Normalizar `null` a "todos" en el constructor compacto + prueba. | ✔ Corregido en `1120228` |
+| R-3 | Baja | `ConsolaMenu` | Las opciones de tipo/responsable del *prompt* estaban escritas a mano. | Al agregar un tipo hay que acordarse de editar el texto (viola OCP). | `Enums.opciones(Class)` genera la lista; agregar un tipo es 1 línea. | ✔ Corregido en `1120228` |
+| R-4 | **Alta** | `SolicitudService` | Si `guardar()` falla *después* de modificar la solicitud en memoria, memoria y archivo quedan distintos hasta el próximo guardado exitoso. | Posible desajuste visible en la misma sesión tras un error de disco. | Guardar antes de confirmar el cambio (*unit of work*) o revertir el cambio ante el fallo. | ✔ Corregido en `bd1b3f5` (segunda ronda): el servicio revierte la memoria; 4 pruebas con stub, en rojo antes de corregir |
 | R-5 | Baja | enums `desde()` | Devuelven `null` si el texto no corresponde. | El llamador debe acordarse de chequear; `requerir` lo centraliza en la consola. | Cambiar a `Optional` en una iteración futura. | ◐ Aceptado |
 | R-6 | Baja | `ConsolaMenu.cambiarEstado/asignarResponsable` | Llama a `servicio.obtener(id)` solo para que "no existe la solicitud" aparezca antes que "estado desconocido". | Acoplamiento al orden de errores. | Se preserva a propósito: el orden es parte del comportamiento externo (prueba `laExistenciaDeLaSolicitudSeValidaAntesQueElEstado`). | ◐ Aceptado |
 | R-7 | Baja | proyecto | No hay *linter* ni formateador automático. | El estilo depende de la revisión manual. | Agregar Checkstyle/Spotless al CI. | ⏳ Pendiente |
@@ -71,11 +71,11 @@ Una auditoría del trabajo completo contra la consigna y los apuntes produjo nue
 
 | ID | Sev. | Ubicación | Observación (hecho) | Impacto | Propuesta | Estado |
 |---|---|---|---|---|---|---|
-| R-10 | Media | `Solicitud.reconstruir` | Seguía con 5 parámetros; el apunte define *Long Parameter List* desde 5. | El propio criterio de la materia marcaba el smell como activo. | Agrupar estado + responsable en `Seguimiento` (Parameter Object). | ✔ `87fdc4c` (máximo = 4) |
-| R-11 | Media | `scripts/metricas.py` | Las métricas eran "decisiones por archivo": mejoran en parte solo por haber más archivos. | Evidencia débil de mejora. | Agregar CC de McCabe **por método** y umbral CC > 10. | ✔ `90b35f2` (27 → 7; métodos > 10: 5 → 0) |
-| R-12 | Media | afirmación OCP en `docs/02` y ADR-4 | "Agregar un tipo es una línea" sin evidencia ejecutada. | Afirmación no verificable. | Script que lo ejecuta y compara con la versión inicial. | ✔ `56ab6c9` (`experimento-ocp.txt`) |
-| R-13 | Media | `docs/04` | Terminología imprecisa: el doble de prueba se llamaba "stub/espía" sin distinguir fake/stub/mock; "contrato" ambiguo. | Marca un corrector atento a la definición técnica. | Tabla de dobles; renombrar a "contrato de interfaz (LSP)"; agregar un mock real. | ✔ `39ea3e0` + `docs/04` |
-| R-14 | Media | pruebas | No había evidencia de que las pruebas detecten defectos. | Una prueba que nunca falla no prueba nada. | Mutación manual de 14 defectos realistas. | ✔ `56ab6c9` (14/14 matados) |
+| R-10 | Media | `Solicitud.reconstruir` | Seguía con 5 parámetros; el apunte define *Long Parameter List* desde 5. | El propio criterio de la materia marcaba el smell como activo. | Agrupar estado + responsable en `Seguimiento` (Parameter Object). | ✔ `499c5ab` (máximo = 4) |
+| R-11 | Media | `scripts/metricas.py` | Las métricas eran "decisiones por archivo": mejoran en parte solo por haber más archivos. | Evidencia débil de mejora. | Agregar CC de McCabe **por método** y umbral CC > 10. | ✔ `daa974e` (27 → 7; métodos > 10: 5 → 0) |
+| R-12 | Media | afirmación OCP en `docs/02` y ADR-4 | "Agregar un tipo es una línea" sin evidencia ejecutada. | Afirmación no verificable. | Script que lo ejecuta y compara con la versión inicial. | ✔ `c09c380` (`experimento-ocp.txt`) |
+| R-13 | Media | `docs/04` | Terminología imprecisa: el doble de prueba se llamaba "stub/espía" sin distinguir fake/stub/mock; "contrato" ambiguo. | Marca un corrector atento a la definición técnica. | Tabla de dobles; renombrar a "contrato de interfaz (LSP)"; agregar un mock real. | ✔ `bd1b3f5` + `docs/04` |
+| R-14 | Media | pruebas | No había evidencia de que las pruebas detecten defectos. | Una prueba que nunca falla no prueba nada. | Mutación manual de 14 defectos realistas. | ✔ `c09c380` (14/14 matados) |
 | R-15 | Baja | `docs/01` | Prioridad A/M/B sin criterio de cálculo; faltaba aclarar el origen del sistema base y 209 vs 186 líneas. | Justificación = conclusión sin razón. | Puntaje impacto × probabilidad; nota de origen; aclaración de métricas. | ✔ `docs/01` |
 
 **Reconocimientos (lo que está bien hecho):** red de seguridad escrita *antes* de refactorizar; pruebas de contrato que comprueban LSP; un commit

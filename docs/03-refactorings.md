@@ -1,21 +1,21 @@
 # Refactorings aplicados (antes / después)
 
 Regla de oro de la materia (Fowler, Unidad 1): **refactorizar con pruebas**. Antes del primer refactoring se escribió una
-red de seguridad (`1e51dd8`, tag `etapa-pruebas-base`): 6 escenarios de referencia (*golden master*) que ejecutan el programa
+red de seguridad (`d2ffcc6`, tag `etapa-pruebas-base`): 6 escenarios de referencia (*golden master*) que ejecutan el programa
 como lo haría una persona y comparan la salida con la de la versión inicial. **Cada refactoring es un commit y se hizo con la suite
 completa en verde.** Se aplicaron **7** (el mínimo pedido es 4): los 6 primeros en la primera pasada y el 7.º tras la segunda ronda de code review.
 
 | # | Técnica | Smell que ataca | Concepto de la materia | Commit |
 |---|---|---|---|---|
-| 1 | **Extract Method** (+ Rename, eliminación de duplicación y código muerto) | #2 Long Method, #7 Duplicated Code, #12 nombres, #13 código muerto | Clean Code: funciones pequeñas, nombres expresivos, DRY (Unidad 1) | `4e969b2` |
-| 2 | **Replace Type Code with Enum** | #3 Primitive Obsession | Primitive Obsession y OCP (Unidad 1) | `dc5e2f0` |
-| 3 | **Move Method** | #9 Feature Envy / Data Class, #10 cadenas `if/else` | SRP y cohesión; *Feature Envy* (Unidad 1) | `fca39db` |
-| 4 | **Introduce Parameter Object** | #8 Long Parameter List / Data Clump | Clean Code: pocos parámetros; *Data Clump* (Unidad 1) | `2ab801e` |
-| 5 | **Replace Error Code with Exception** | #4 códigos de error, #5 errores silenciados | Clean Code: manejo de errores con excepciones (Unidad 1) | `438f472` |
-| 6 | **Extract Class** + inversión de dependencias | #1 God Class, #6 estado global, #11 lógica mezclada con presentación | SRP y DIP de SOLID (Unidad 1); testabilidad (Unidad 3) | `0c11528` |
-| 7 | **Introduce Parameter Object** (`Seguimiento`) | Long Parameter List residual (R-10 del code review): `Solicitud.reconstruir` seguía con 5 parámetros | Clean Code + corrección surgida del code review (Unidades 1 y 3) | `87fdc4c` |
+| 1 | **Extract Method** (+ Rename, eliminación de duplicación y código muerto) | #2 Long Method, #7 Duplicated Code, #12 nombres, #13 código muerto | Clean Code: funciones pequeñas, nombres expresivos, DRY (Unidad 1) | `f6160df` |
+| 2 | **Replace Type Code with Enum** | #3 Primitive Obsession | Primitive Obsession y OCP (Unidad 1) | `2d038f8` |
+| 3 | **Move Method** | #9 Feature Envy / Data Class, #10 cadenas `if/else` | SRP y cohesión; *Feature Envy* (Unidad 1) | `d3e5cb8` |
+| 4 | **Introduce Parameter Object** | #8 Long Parameter List / Data Clump | Clean Code: pocos parámetros; *Data Clump* (Unidad 1) | `1a55ea3` |
+| 5 | **Replace Error Code with Exception** | #4 códigos de error, #5 errores silenciados | Clean Code: manejo de errores con excepciones (Unidad 1) | `7503256` |
+| 6 | **Extract Class** + inversión de dependencias | #1 God Class, #6 estado global, #11 lógica mezclada con presentación | SRP y DIP de SOLID (Unidad 1); testabilidad (Unidad 3) | `1bc528a` |
+| 7 | **Introduce Parameter Object** (`Seguimiento`) | Long Parameter List residual (R-10 del code review): `Solicitud.reconstruir` seguía con 5 parámetros | Clean Code + corrección surgida del code review (Unidades 1 y 3) | `499c5ab` |
 
-## 1. Extract Method — `4e969b2`
+## 1. Extract Method — `f6160df`
 `Main.main` (107 líneas, 24 decisiones) pasa a delegar cada opción del menú en un método con nombre propio.
 
 ```java
@@ -35,7 +35,7 @@ private static boolean ejecutarOpcion(String opcion, Scanner teclado) {
 ```
 También se extrajeron `leerTexto`, `leerTextoEnMayusculas` y `leerId`, y las tres copias de la búsqueda por id se unificaron en `buscarPorId` (más tarde, `obtener(id)` en el servicio).
 
-## 2. Replace Type Code with Enum — `dc5e2f0`
+## 2. Replace Type Code with Enum — `2d038f8`
 ```java
 // ANTES: un error de tipeo compila y falla en ejecucion
 if (s.estado.equals("PENDIENTE")) { ... } else if (s.estado.equals("EN_PROCESO")) { ... }
@@ -45,7 +45,7 @@ public enum Estado { PENDIENTE, EN_PROCESO, RESUELTA, RECHAZADA; ... }
 ```
 Las 49 comparaciones con literales bajaron a 1 (el indicador `"1"` del CSV).
 
-## 3. Move Method — `fca39db`
+## 3. Move Method — `d3e5cb8`
 Las reglas se mudan junto a los datos que usan.
 ```java
 // ANTES: GestorSolicitudes.calcularPlazo(Solicitud s) leia solo campos de s (Feature Envy)
@@ -54,7 +54,7 @@ public int calcularPlazo() { return prioridad.plazoBaseDias() + tipo.plazoExtraD
 ```
 La prioridad base por tipo pasa a `TipoSolicitud`; las transiciones permitidas a `Estado.puedePasarA`; la coincidencia con los filtros a `FiltroSolicitudes.acepta`.
 
-## 4. Introduce Parameter Object — `2ab801e`
+## 4. Introduce Parameter Object — `1a55ea3`
 ```java
 // ANTES: 6 parametros String/boolean intercambiables
 registrar(String legajo, String nombre, String email, String tipo, String descripcion, boolean urgente)
@@ -66,7 +66,7 @@ buscar(FiltroSolicitudes filtro)         // record FiltroSolicitudes(estado, tip
 ```
 `legajo/nombre/email` viajaban siempre juntos (*Data Clump*): ahora son `Estudiante`, un *value object* que se valida a sí mismo.
 
-## 5. Replace Error Code with Exception — `438f472`
+## 5. Replace Error Code with Exception — `7503256`
 ```java
 // ANTES
 int r = GestorSolicitudes.cambiarEstado(id, ne);
@@ -78,7 +78,7 @@ catch (SolicitudException | ArchivoDatosException e) { salida.println("Error: " 
 ```
 Los `catch (Exception e) {}` vacíos desaparecen: un archivo dañado ahora se informa con archivo y línea (mejora deliberada, cubierta por `ArchivoDatosCorruptoTest`).
 
-## 6. Extract Class + DIP — `0c11528`
+## 6. Extract Class + DIP — `1bc528a`
 `GestorSolicitudes` (209 líneas, 10 métodos, 80 decisiones, 3 campos `static` mutables) desaparece:
 
 ```
@@ -87,7 +87,7 @@ Main ──crea──▶ SolicitudService ──usa──▶ «interface» Solic
 Solicitud · Estudiante · NuevaSolicitud · FiltroSolicitudes · Estado · Prioridad · TipoSolicitud · Responsable   (dominio)
 ```
 
-## 7. Introduce Parameter Object (`Seguimiento`) — `87fdc4c`
+## 7. Introduce Parameter Object (`Seguimiento`) — `499c5ab`
 El apunte define *Long Parameter List* como 5 o más parámetros. Tras el refactoring 4 todavía quedaba `Solicitud.reconstruir(id, datos, prioridad, estado, responsable)` con 5 (y su constructor privado).
 `estado` y `responsable` cambian siempre juntos (*Data Clump*), así que se agrupan:
 ```java
@@ -103,14 +103,14 @@ Regla (ADR-9): un refactoring no cambia el comportamiento externo. Solo se hicie
 
 | Cambio | Por qué es un defecto y no una regla | Prueba y evidencia | Commit |
 |---|---|---|---|
-| Escapar `;` en el CSV | corrompía el registro al recargar, en silencio | `unPuntoYComaEnUnTextoNoCorrompeElRegistro`, `evidencias/defecto-latente-separador.txt` | `0c11528` |
-| Archivo dañado: avisar (archivo y línea) y terminar con código 1 | seguía con datos incompletos sin avisar | `ArchivoDatosCorruptoTest` | `438f472` |
-| Revertir la memoria si no se pudo guardar (R-4) | memoria y disco quedaban distintos tras un error de disco | 4 pruebas con *stub* (en rojo antes de corregir: `evidencias/r4-fase-roja.txt`) | `39ea3e0` |
+| Escapar `;` en el CSV | corrompía el registro al recargar, en silencio | `unPuntoYComaEnUnTextoNoCorrompeElRegistro`, `evidencias/defecto-latente-separador.txt` | `1bc528a` |
+| Archivo dañado: avisar (archivo y línea) y terminar con código 1 | seguía con datos incompletos sin avisar | `ArchivoDatosCorruptoTest` | `7503256` |
+| Revertir la memoria si no se pudo guardar (R-4) | memoria y disco quedaban distintos tras un error de disco | 4 pruebas con *stub* (en rojo antes de corregir: `evidencias/r4-fase-roja.txt`) | `bd1b3f5` |
 
 **No se tocaron** (reglas discutibles, ADR-6): validación débil del email y el orden de validación legajo → nombre → email → tipo.
 
 ## Atomicidad de los commits (limitación reconocida)
-Fowler recomienda pasos pequeños. Los commits `4e969b2` (1) y `0c11528` (6) agrupan varias transformaciones relacionadas:
+Fowler recomienda pasos pequeños. Los commits `f6160df` (1) y `1bc528a` (6) agrupan varias transformaciones relacionadas:
 - (1) combina Extract Method, Rename y la eliminación de duplicación/código muerto; son pasos mecánicos sobre las mismas líneas de `Main`/`GestorSolicitudes`.
 - (6) combina Extract Class (servicio, repositorio, reporte, consola) con la inversión de dependencias: eliminar el estado `static` y la clase `GestorSolicitudes` obliga a cambiar a la vez todos sus llamadores; un paso intermedio compilable habría requerido adaptadores temporales.
 Con más tiempo se dividiría en: (a) extraer `CsvSolicitudRepository`, (b) extraer `ReporteSolicitudes`, (c) extraer `SolicitudService`, (d) inyectar el repositorio. **Ambos commits se verificaron con la suite completa y la comparación 6/6**, y los refactorings 2 a 5 y 7 son atómicos (una técnica por commit).

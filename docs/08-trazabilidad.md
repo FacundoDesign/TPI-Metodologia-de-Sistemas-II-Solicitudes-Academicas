@@ -3,20 +3,20 @@
 ## 1. Smell → principio → refactoring → commit → pruebas → evidencia
 | # | Smell (docs/01) | Principio | Refactoring (Fowler) | Commit | Pruebas que lo protegen | Evidencia |
 |---|---|---|---|---|---|---|
-| 1 | God Class | SRP | Extract Class | `0c11528` | `SolicitudServiceTest`, `ReporteSolicitudesTest`, `CsvSolicitudRepositoryTest` | `metricas-despues.txt` |
-| 2 | Long Method (`Main.main`) | Clean Code (funciones chicas) | Extract Method | `4e969b2` | `ComportamientoExternoTest`, `ConsolaMenuTest` | `metricas-*.txt`, `comparacion-antes-despues.txt` |
-| 3 | Strings mágicos | Tipado / OCP | Replace Type Code with Enum | `dc5e2f0` | `EstadoTest`, `TipoSolicitudTest`, `PrioridadTest` | `experimento-ocp.txt` |
-| 4 | Códigos de error | Clean Code (excepciones) | Replace Error Code with Exception | `438f472` | `SolicitudServiceTest` | `tests-por-clase.txt` |
-| 5 | `catch` vacío | Clean Code | Replace Error Code with Exception | `438f472` | `CsvSolicitudRepositoryTest` | `defecto-latente-separador.txt` |
-| 6 | Estado global | DIP | Extract Class + inversión | `0c11528` | `SolicitudServiceTest` (repositorio en memoria) | `tests-resultado.txt` |
-| 7 | Duplicación | DRY | Extract Method | `4e969b2` | golden master | `comparacion-antes-despues.txt` |
-| 8 | Long Parameter List | Clean Code | Introduce Parameter Object | `2ab801e`, `87fdc4c` | `FiltroSolicitudesTest`, `SolicitudTest` | `metricas-despues.txt` (máx. 4 parámetros) |
-| 9 | Feature Envy / Data Class | Encapsulamiento | Move Method | `fca39db` | `SolicitudTest` | `tests-por-clase.txt` |
-| 10 | if/else sobre tipos | OCP | Replace Type Code with Enum | `dc5e2f0` | `TipoSolicitudTest` | `experimento-ocp.txt` |
-| 11 | Lógica + presentación | SRP | Extract Class | `0c11528` | `ReporteSolicitudesTest` | `tests-por-clase.txt` |
-| 12 | Nombres pobres | Clean Code | Rename | `4e969b2` | golden master | revisión de código |
-| 13 | Código muerto | Clean Code | Eliminar | `4e969b2` | golden master | `git diff estado-inicial` |
-| R-4 | Inconsistencia memoria/disco | Robustez | Corrección TDD (ADR-10) | `39ea3e0` | `SolicitudServiceConsistenciaTest` (7) | `r4-fase-roja.txt` |
+| 1 | God Class | SRP | Extract Class | `1bc528a` | `SolicitudServiceTest`, `ReporteSolicitudesTest`, `CsvSolicitudRepositoryTest` | `metricas-despues.txt` |
+| 2 | Long Method (`Main.main`) | Clean Code (funciones chicas) | Extract Method | `f6160df` | `ComportamientoExternoTest`, `ConsolaMenuTest` | `metricas-*.txt`, `comparacion-antes-despues.txt` |
+| 3 | Strings mágicos | Tipado / OCP | Replace Type Code with Enum | `2d038f8` | `EstadoTest`, `TipoSolicitudTest`, `PrioridadTest` | `experimento-ocp.txt` |
+| 4 | Códigos de error | Clean Code (excepciones) | Replace Error Code with Exception | `7503256` | `SolicitudServiceTest` | `tests-por-clase.txt` |
+| 5 | `catch` vacío | Clean Code | Replace Error Code with Exception | `7503256` | `CsvSolicitudRepositoryTest` | `defecto-latente-separador.txt` |
+| 6 | Estado global | DIP | Extract Class + inversión | `1bc528a` | `SolicitudServiceTest` (repositorio en memoria) | `tests-resultado.txt` |
+| 7 | Duplicación | DRY | Extract Method | `f6160df` | golden master | `comparacion-antes-despues.txt` |
+| 8 | Long Parameter List | Clean Code | Introduce Parameter Object | `1a55ea3`, `499c5ab` | `FiltroSolicitudesTest`, `SolicitudTest` | `metricas-despues.txt` (máx. 4 parámetros) |
+| 9 | Feature Envy / Data Class | Encapsulamiento | Move Method | `d3e5cb8` | `SolicitudTest` | `tests-por-clase.txt` |
+| 10 | if/else sobre tipos | OCP | Replace Type Code with Enum | `2d038f8` | `TipoSolicitudTest` | `experimento-ocp.txt` |
+| 11 | Lógica + presentación | SRP | Extract Class | `1bc528a` | `ReporteSolicitudesTest` | `tests-por-clase.txt` |
+| 12 | Nombres pobres | Clean Code | Rename | `f6160df` | golden master | revisión de código |
+| 13 | Código muerto | Clean Code | Eliminar | `f6160df` | golden master | `git diff estado-inicial` |
+| R-4 | Inconsistencia memoria/disco | Robustez | Corrección TDD (ADR-10) | `bd1b3f5` | `SolicitudServiceConsistenciaTest` (7) | `r4-fase-roja.txt` |
 
 ## 2. Consigna → etapa → dónde se cumple
 | Etapa de la consigna | Documento / sección | Evidencia |
