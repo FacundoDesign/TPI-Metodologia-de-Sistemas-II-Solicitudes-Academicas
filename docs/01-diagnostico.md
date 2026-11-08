@@ -3,6 +3,11 @@
 Sistema analizado: **Gestión de Solicitudes Académicas** (consola, Java, persistencia en CSV).
 Alcance del análisis: todo el código de producción (`src/main/java`, 3 archivos, 310 LOC).
 
+> **Origen del sistema base (transparencia).** La consigna admite "un prototipo construido por el equipo". `estado-inicial` es un prototipo
+> escrito para este trabajo **con defectos de diseño típicos introducidos a propósito** (God Class, *strings* mágicos, códigos de error,
+> `catch` vacíos, estado global). No es un sistema heredado de producción. Su comportamiento visible es real y verificable (6 escenarios).
+> Los números de línea citados abajo corresponden a ese tag: se verifican con `git show estado-inicial:src/main/java/ar/edu/solicitudes/<Archivo>.java`.
+
 ## 1. Calidad externa vs. calidad interna
 
 | Dimensión | Qué se observa | Evidencia |
@@ -26,15 +31,21 @@ se olvida alguno.
 ## 2. Métricas de la versión inicial (reproducibles)
 
 ```
-$ python3 scripts/metricas.py
+$ python3 scripts/metricas.py src/main/java    # sobre el tag estado-inicial
 archivo                                LOC  metod  decis  liter  stat catchV
 GestorSolicitudes.java                 186     10     80     43     3      2
 Main.java                              111      1     24      6     0      0
 Solicitud.java                          13      0      0      0     0      0
+----------------------------------------------------------------------------
 archivos=3  LOC=310  metodos=11  decisiones=104
 comparaciones con literal=49  campos static mutables=3  catch vacios=2
 metodo mas largo: Main.main (107 lineas)   max parametros: GestorSolicitudes.registrar (6)
+LOC promedio por archivo=103.3  decisiones por archivo=34.7
+complejidad ciclomatica por metodo (McCabe aprox.): maxima=27 en Main.main   metodos con CC>10: 5 de 11
+top 3 CC: Main.main=27, GestorSolicitudes.registrar=21, GestorSolicitudes.cambiarEstado=17
 ```
+
+**Cómo leer las cifras:** *209 líneas* es el total de líneas del archivo (`wc -l`, con blancos y comentarios); *186 LOC* son líneas de código (sin blancos ni comentarios). La **complejidad ciclomática (CC) de McCabe** por método se aproxima como 1 + cantidad de `if`/`for`/`while`/`case`/`catch`/`&&`/`||`/`?` del método; el umbral habitual de revisión es CC > 10 (SonarQube, Unidad 3, usa el mismo concepto). En la versión inicial **5 de 11 métodos superan el umbral** y `Main.main` llega a CC 27.
 
 ## 3. Deuda técnica y code smells (13 hallazgos)
 
@@ -55,6 +66,17 @@ Prioridad = riesgo × costo de no corregirlo. **A** alta, **M** media, **B** baj
 | 11 | **Lógica mezclada con presentación** | `imprimirReporte()` imprime con `System.out` dentro del gestor; `Main` consulta de nuevo la solicitud para armar mensajes | No se puede probar el reporte sin capturar la consola | Medio | **M** | `ReporteService` devuelve un objeto; `ConsolaMenu` formatea |
 | 12 | **Nombres poco expresivos** | `db`, `sig`, `ARCH`, `p`, `l`, `n`, `e`, `t`, `d`, `u`, `r`, `ne`, `fe`, `ft`, `fp`, `fr`, `fl` | Hay que deducir el significado leyendo el código | Medio | **B** | Rename (Clean Code) |
 | 13 | **Código muerto y comentado** | `exportarTxt` (nunca se invoca; `int x = 0;`, bucle comentado, `TODO`) | Ruido y falsa sensación de funcionalidad | Bajo | **B** | Eliminar |
+
+### Criterio de priorización (cómo se obtuvo A / M / B)
+**Puntaje = Impacto (1-3) × Probabilidad (1-3).** *Impacto:* 3 = puede perder o corromper datos, ocultar errores o bloquear cambios; 2 = encarece cada cambio; 1 = molestia de lectura.
+*Probabilidad* de que cause problemas en el próximo cambio: 3 = en cada cambio; 2 = en cambios frecuentes; 1 = rara vez. **A ≥ 6 · M 3-5 · B ≤ 2.**
+
+| # | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Impacto | 3 | 3 | 3 | 3 | 3 | 3 | 2 | 2 | 2 | 2 | 2 | 1 | 1 |
+| Probabilidad | 3 | 3 | 3 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 |
+| **Puntaje** | **9** | **9** | **9** | **6** | **6** | **6** | 4 | 4 | 4 | 4 | 4 | 2 | 1 |
+| Prioridad | A | A | A | A | A | A | M | M | M | M | M | B | B |
 
 ### Defecto latente descubierto durante el diagnóstico (no cubierto por las pruebas)
 El formato CSV usa `;` como separador sin escapar. Una descripción con `;` **corrompe el registro al recargarlo
