@@ -5,15 +5,15 @@ red de seguridad (`1e51dd8`, tag `etapa-pruebas-base`): 6 escenarios de referenc
 como lo haría una persona y comparan la salida con la de la versión inicial. **Cada refactoring es un commit y se hizo con la suite
 completa en verde.** Se aplicaron **7** (el mínimo pedido es 4): los 6 primeros en la primera pasada y el 7.º tras la segunda ronda de code review.
 
-| # | Técnica | Smell que ataca | Commit |
-|---|---|---|---|
-| 1 | **Extract Method** (+ Rename, eliminación de duplicación y código muerto) | #2 Long Method, #7 Duplicated Code, #12 nombres, #13 código muerto | `4e969b2` |
-| 2 | **Replace Type Code with Enum** | #3 Primitive Obsession | `dc5e2f0` |
-| 3 | **Move Method** | #9 Feature Envy / Data Class, #10 cadenas `if/else` | `fca39db` |
-| 4 | **Introduce Parameter Object** | #8 Long Parameter List / Data Clump | `2ab801e` |
-| 5 | **Replace Error Code with Exception** | #4 códigos de error, #5 errores silenciados | `438f472` |
-| 6 | **Extract Class** + inversión de dependencias | #1 God Class, #6 estado global, #11 lógica mezclada con presentación | `0c11528` |
-| 7 | **Introduce Parameter Object** (`Seguimiento`) | Long Parameter List residual (R-10 del code review): `Solicitud.reconstruir` seguía con 5 parámetros | `87fdc4c` |
+| # | Técnica | Smell que ataca | Concepto de la materia | Commit |
+|---|---|---|---|---|
+| 1 | **Extract Method** (+ Rename, eliminación de duplicación y código muerto) | #2 Long Method, #7 Duplicated Code, #12 nombres, #13 código muerto | Clean Code: funciones pequeñas, nombres expresivos, DRY (Unidad 1) | `4e969b2` |
+| 2 | **Replace Type Code with Enum** | #3 Primitive Obsession | Primitive Obsession y OCP (Unidad 1) | `dc5e2f0` |
+| 3 | **Move Method** | #9 Feature Envy / Data Class, #10 cadenas `if/else` | SRP y cohesión; *Feature Envy* (Unidad 1) | `fca39db` |
+| 4 | **Introduce Parameter Object** | #8 Long Parameter List / Data Clump | Clean Code: pocos parámetros; *Data Clump* (Unidad 1) | `2ab801e` |
+| 5 | **Replace Error Code with Exception** | #4 códigos de error, #5 errores silenciados | Clean Code: manejo de errores con excepciones (Unidad 1) | `438f472` |
+| 6 | **Extract Class** + inversión de dependencias | #1 God Class, #6 estado global, #11 lógica mezclada con presentación | SRP y DIP de SOLID (Unidad 1); testabilidad (Unidad 3) | `0c11528` |
+| 7 | **Introduce Parameter Object** (`Seguimiento`) | Long Parameter List residual (R-10 del code review): `Solicitud.reconstruir` seguía con 5 parámetros | Clean Code + corrección surgida del code review (Unidades 1 y 3) | `87fdc4c` |
 
 ## 1. Extract Method — `4e969b2`
 `Main.main` (107 líneas, 24 decisiones) pasa a delegar cada opción del menú en un método con nombre propio.
