@@ -9,8 +9,8 @@ Sistema de consola para **registrar solicitudes de estudiantes** (certificados, 
 ## Integrantes
 | Integrante | Rol / contribución principal | Usuario de GitHub |
 |---|---|---|
-| **[COMPLETAR: nombre y apellido]** | **[COMPLETAR]** | **[COMPLETAR]** |
-| **[COMPLETAR]** | **[COMPLETAR]** | **[COMPLETAR]** |
+| **** | **Facundo** | **Archiria** |
+
 
 Materia: Metodología de Sistemas II · Tecnicatura Universitaria en Programación a Distancia · Comisión **[COMPLETAR]** · Docente **[COMPLETAR]**
 Video de defensa: **[COMPLETAR: enlace]**
