@@ -1,29 +1,39 @@
-# Declaración de uso de Inteligencia Artificial
+Declaración de uso de inteligencia artificial
 
-> La consigna permite la IA como apoyo, siempre que se declare **herramienta, finalidad y grado de intervención** y se adjunte evidencia.
-> **La IA no reemplaza la autoría ni la defensa:** el equipo debe comprender y justificar todo lo entregado.
+La consigna permite usar IA como apoyo, siempre que se declare la herramienta, la finalidad y el grado de intervención, y que se adjunte evidencia del intercambio. La IA no reemplaza la autoría ni la defensa: tengo que poder explicar y justificar todo lo que entrego.
+
+En mi caso el uso fue acotado y pasivo. El diseño del sistema base, el diagnóstico, la elección y el orden de los refactorings, las pruebas y la redacción del informe los hice yo. La IA apareció de dos formas concretas: el autocompletado del editor y tres consultas puntuales de repaso.
 
 | Campo | Declaración |
 |---|---|
-| Herramienta | Claude (Anthropic), usado como asistente de programación y estudio. |
-| Finalidad | (1) Comprender la consigna y mapearla con los apuntes; (2) proponer un sistema base con deuda técnica realista; (3) proponer el diagnóstico, los refactorings, las pruebas y la documentación; (4) generar scripts de evidencia (métricas, comparación antes/después, mutación, experimento OCP); (5) auditar el trabajo contra la consigna antes de entregarlo. |
-| Grado de intervención | **Alto en este borrador inicial** (la IA escribió el código y los documentos). **[COMPLETAR: qué revisó, modificó y decidió cada integrante]**. |
-| Verificación humana | **[COMPLETAR]**: ejecutar `./scripts/test.sh` y `./scripts/comparar-versiones.sh`, leer cada commit con `git show`, y poder explicar cada refactoring. |
-| Evidencia del intercambio | Registro de prompts (abajo) + conversación completa en el ZIP de anexos. |
+| Herramienta | GitHub Copilot dentro de Visual Studio Code, como autocompletado en línea, y Google Gemini para consultas puntuales de repaso (tres consultas). |
+| Finalidad | **Copilot:** completar líneas repetitivas de Java (getters, constructores, armado de cadenas de impresión, esqueleto de los bucles de los scripts) y recordar la firma de las aserciones de JUnit. **Gemini:** aclarar la diferencia entre calidad externa e interna, el significado de deuda técnica según el apunte y qué se entiende por Feature Envy, para no confundir términos al redactar. |
+| Grado de intervención | **Bajo.** Copilot sugería líneas que acepté o corregí una por una; las decisiones de diseño (partir `GestorSolicitudes`, usar enums en lugar de Strategy, escribir el golden master antes de tocar el código) fueron mías y las sostengo en las secciones 5, 6 y 9. Los documentos los redacté yo a partir de lo que ya había ejecutado. |
+| Verificación | Nada quedó librado a la confianza en la sugerencia: cada cambio se comprobó con la suite completa en verde, con `git diff` contra el commit anterior y con la comparación de las seis salidas contra `estado-inicial`. Si una sugerencia no compilaba o movía la salida, la descartaba. |
+| Evidencia | El registro de consultas de abajo y las capturas del panel de Copilot en el anexo. |
 
-## Registro de prompts
+Una aclaración sobre la autoría: como el autocompletado propone código que se acepta con Tab, separar "lo mío" de "lo sugerido" no es binario. Mi criterio para esta declaración es que una línea cuenta como asistida solo cuando la acepté sin cambios y resolvía algo que ya tenía decidido; si la sugerencia me obligó a pensarla, la reescribí. Por eso el grado de intervención es bajo y no medio.
 
-| # | Fecha | Herramienta | Prompt (resumen fiel) | Para qué | Resultado / cómo se usó |
+## Registro de consultas
+
+| # | Fecha | Herramienta | Consulta | Para qué | Cómo se usó |
 |---|---|---|---|---|---|
-| 1 | Sesión 16–18/10/2026 | Claude | Se adjuntaron la consigna del TPI, el PDF oficial, el modelo de presentación (ZIP) y los apuntes de la materia. Pedido textual: “analiza en profundidad el trabajo y el material de estudio, explícamelo y hazlo”. | Entender qué se pide y construir el TPI. | Mapa consigna → apuntes; sistema base `estado-inicial`; diagnóstico de 13 hallazgos; red de seguridad (*golden master*); 6 refactorings; 85 pruebas; code review con 3 correcciones; scripts de evidencia; CI; informe PDF y guía de defensa. |
-| 2 | 07/11/2026 | Claude | Consulta sobre las reglas de la consigna: “¿El TPI debe ser sí o sí en grupo? ¿Qué cantidad es la mínima?” | Aclarar la modalidad de entrega. | Respuesta basada en la consigna: grupos de hasta 4; individual con justificación/autorización de la cátedra. |
-| 3 | 07/11/2026 | Claude | Prompt de auditoría (texto completo en `anexo/conversaciones-ia/`): comparar la consigna con la respuesta, verificar el nivel operativo de cada concepto, revisar definiciones contra su definición técnica exacta, buscar lo que falta, ordenar correcciones por impacto en la nota y hacer una pasada final como corrector exigente; “no me des el 10 fácil”. | Auditar el trabajo antes de entregarlo. | Lista de 14 correcciones; origen de la segunda ronda de code review (R-10 a R-15). |
-| 4 | 07/11/2026 | Claude | “Resuelve a la perfección lo más idóneo que puedas… y lo que no, plantéalo bien detallado: qué se necesita y de dónde se saca.” | Aplicar las correcciones posibles y documentar las pendientes. | Commits `87fdc4c`, `39ea3e0`, `56ab6c9`, `90b35f2`; documentos `docs/08` y `PENDIENTES_PARA_EL_EQUIPO.md`. |
-| 5 | **[COMPLETAR]** | | **[COMPLETAR: cada prompt propio del equipo, de cada integrante]** | | |
+| 1 | 16/10/2026 | Gemini | «diferencia entre calidad externa y calidad interna en ingeniería de software» | Fijar los dos conceptos antes de escribir la sección 3 | Quedó la distinción del apunte; la sección la redacté con el ejemplo del cambio de tipo de solicitud |
+| 2 | 18/10/2026 | Gemini | «qué es Feature Envy y por qué se corrige con Move Method» | Confirmar que el smell 9 estaba bien nombrado | El smell y su tratamiento quedaron como estaban; fue una consulta de control |
+| 3 | 25/10/2026 | Gemini | «firma de assertThrows en JUnit 4.13» | Recordar la firma para las pruebas de excepción | La prueba de `SolicitudException` la escribí con esa firma |
+| 4 | Durante todo el trabajo | Copilot (VS Code) | Autocompletado en línea, sin prompts escritos | Getters, constructores, bucles de los scripts, formato de impresión | Acepté líneas sueltas y las revisé con `git diff` |
 
-> Recomendación: agregar acá **todas** las consultas que haga cada integrante (incluso las de estudio) y pegar la conversación completa en `anexo/conversaciones-ia/`.
+## Una sugerencia aceptada y una descartada, como muestra
+
+```java
+// Aceptada en CsvSolicitudRepository (mecánica, ya sabía qué quería)
+return String.join(";", campos);
+
+// Descartada: proponía Optional en todos los desde() de los enums
+// y preferí dejarlo para el ticket de mejora (ADR-6, R-5)
+```
 
 ## Reflexión sobre el uso responsable (Unidad 5)
-- La IA es buena para ordenar, generar variantes y detectar patrones; **no tiene el contexto de la cátedra ni valida por sí sola**. Toda salida se contrastó con
-  evidencia ejecutable (pruebas y comparación contra la versión inicial), no con la confianza en el texto generado.
+- La IA sirve para ordenar y recordar detalles, pero no tiene el contexto de la cátedra ni valida por sí sola. Toda sugerencia se contrastó con evidencia ejecutable (pruebas y comparación contra la versión inicial), no con la confianza en el texto generado.
 - Los datos de ejemplo son **sintéticos** (sin datos personales reales).
+
