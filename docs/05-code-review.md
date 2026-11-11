@@ -2,7 +2,7 @@
 
 > El code review **no es una auditoría ni una crítica personal**: es una práctica colaborativa para mejorar el software (Unidad 3).
 > Alcance revisado: el repositorio en el tag `etapa-pruebas` (commit `90d3bf5`), antes de aplicar las correcciones.
-> Revisor/a: **[COMPLETAR: integrante revisor/a]** · Autor/a del cambio: **[COMPLETAR: integrante autor/a]** · Fecha: **[COMPLETAR]**
+> Revisor/a: **Facundo** · Autor/a del cambio: **Facundo Archiria** · Fecha: **8 de Noviembre**
 > (Idealmente, cada refactoring se integra mediante un *Pull Request* revisado por otra persona del equipo; los comentarios quedan en GitHub como evidencia.)
 
 ## 1. Checklist técnico
