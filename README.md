@@ -9,11 +9,11 @@ Sistema de consola para **registrar solicitudes de estudiantes** (certificados, 
 ## Integrantes
 | Integrante | Rol / contribución principal | Usuario de GitHub |
 |---|---|---|
-| **** | **Facundo** | **Archiria** |
+| **Facundo Archiria** | **Diseño y Confección** | **FacundoDesign** |
 
 
-Materia: Metodología de Sistemas II · Tecnicatura Universitaria en Programación a Distancia · Comisión **[COMPLETAR]** · Docente **[COMPLETAR]**
-Video de defensa: **[COMPLETAR: enlace]**
+Materia: Metodología de Sistemas II · Tecnicatura Universitaria en Programación a Distancia · Comisión **7** · Docente **Londero Guillermo Humberto**
+Video de defensa: **https://drive.google.com/drive/folders/1t5O9aksEOpVtYm3GzJEREFpJeyLecFcC**
 
 ## Funcionalidades
 1. Registrar solicitud (valida legajo de 5 dígitos, nombre, email y tipo; calcula prioridad y plazo; la urgencia sube un nivel de prioridad).
