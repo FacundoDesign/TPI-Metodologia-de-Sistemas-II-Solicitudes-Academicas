@@ -12,7 +12,8 @@ Sistema de consola para **registrar solicitudes de estudiantes** (certificados, 
 | **Facundo Archiria** | **Diseño y Confección** | **FacundoDesign** |
 
 
-Materia: Metodología de Sistemas II · Tecnicatura Universitaria en Programación a Distancia · Comisión **7** · Docente **Londero Guillermo Humberto**
+Materia: Metodología de Sistemas II · Tecnicatura Universitaria en Programación a Distancia · Comisión **7** · Docente **Londero Guillermo Humberto** - 
+
 Video de defensa: **https://drive.google.com/drive/folders/1t5O9aksEOpVtYm3GzJEREFpJeyLecFcC**
 
 ## Funcionalidades
